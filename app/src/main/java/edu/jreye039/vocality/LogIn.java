@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-public class logIn extends AppCompatActivity {
+public class LogIn extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,12 +18,15 @@ public class logIn extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //Get log in info
-                EditText usernameText = (EditText) findViewById(R.id.usernameText);
-                EditText passwordText = (EditText) findViewById(R.id.passwordText);
+                EditText usernameEditText = (EditText) findViewById(R.id.usernameEditText);
+                EditText passwordEditText = (EditText) findViewById(R.id.passwordEditText);
 
                 //Cast the info to strings
-                String username = usernameText.getText().toString();
-                String password = passwordText.getText().toString();
+                String username = usernameEditText.getText().toString();
+                String password = passwordEditText.getText().toString();
+
+                BackgroundWorker backgroundWorker = new BackgroundWorker(this);
+                backgroundWorker.execute("login", username, password);
             }
         });
     }

@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-public class notLoggedIn extends AppCompatActivity {
+public class NotLoggedIn extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,7 +18,7 @@ public class notLoggedIn extends AppCompatActivity {
         logInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent startIntent = new Intent(getApplicationContext(), logIn.class);
+                Intent startIntent = new Intent(getApplicationContext(), LogIn.class);
                 startActivity(startIntent);
             }
         });
@@ -28,7 +28,7 @@ public class notLoggedIn extends AppCompatActivity {
         signUpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent startIntent = new Intent(getApplicationContext(), createAccount.class);
+                Intent startIntent = new Intent(getApplicationContext(), CreateAccount.class);
                 startActivity(startIntent);
             }
         });
