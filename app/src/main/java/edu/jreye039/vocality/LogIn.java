@@ -22,7 +22,7 @@ public class LogIn extends AppCompatActivity {
 
     public void onLogin(View view) {
         //get login info
-        String username = usernameEditText.getText().toString();
+        String username = usernameEditText.getText().toString().toLowerCase();
         String password = passwordEditText.getText().toString();
 
         BackgroundWorker backgroundWorker = new BackgroundWorker(this);
