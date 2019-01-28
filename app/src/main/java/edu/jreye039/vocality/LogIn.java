@@ -20,7 +20,7 @@ public class LogIn extends AppCompatActivity {
         passwordEditText = (EditText) findViewById(R.id.passwordEditText);
     }
 
-    public void OnLogin(View view) {
+    public void onLogin(View view) {
         //get login info
         String username = usernameEditText.getText().toString();
         String password = passwordEditText.getText().toString();

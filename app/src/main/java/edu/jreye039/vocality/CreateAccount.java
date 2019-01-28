@@ -9,39 +9,49 @@ import android.widget.TextView;
 
 public class CreateAccount extends AppCompatActivity {
 
+    EditText usernameEditText;
+    EditText passwordEditText;
+    EditText confirmPasswordEditText;
+
+    TextView passwordMatchTextView;
+    TextView usernameExistsTextView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_account);
 
-        Button createAccountBtn = (Button) findViewById(R.id.createAccountBtn);
-        createAccountBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //get new user info
-                EditText usernameEditText = (EditText) findViewById(R.id.usernameEditText);
-                EditText passwordEditText = (EditText) findViewById(R.id.passwordEditText);
-                EditText confirmPasswordEditText = (EditText) findViewById(R.id.confirmPasswordEditText);
+        //for retrieving new user info
+        usernameEditText = (EditText) findViewById(R.id.usernameEditText);
+        passwordEditText = (EditText) findViewById(R.id.passwordEditText);
+        confirmPasswordEditText = (EditText) findViewById(R.id.confirmPasswordEditText);
 
-                //cast the info to strings
-                String username = usernameEditText.getText().toString();
-                String password = passwordEditText.getText().toString();
-                String confirmPassword = confirmPasswordEditText.getText().toString();
+        //for validation of new user info
+        passwordMatchTextView = (TextView) findViewById(R.id.passwordMatchTextView);
+        usernameExistsTextView = (TextView) findViewById(R.id.usernameExistsTextView);
 
-                //if the passwords don't match, notify the user
-                TextView passwordMatch = (TextView) findViewById(R.id.passwordMatchTextView);
+    }
 
-                if(password != confirmPassword){
-                    passwordMatch.setVisibility(View.VISIBLE);
-                }
-                //connect to the database
-                //else{
-                //    BackgroundWorker backgroundWorker = new BackgroundWorker(this);
-                //    backgroundWorker.execute("create", username, password);
-                //}
+    public void onCreateAccount(View view) {
+        //get login info
+        String username = usernameEditText.getText().toString();
+        String password = passwordEditText.getText().toString();
 
-                //TODO check if username already exists
-            }
-        });
+        //confirm user's password
+        String confirmPassword = confirmPasswordEditText.getText().toString();
+
+        //if the passwords don't match, notify the user
+        if(password != confirmPassword){
+            passwordMatchTextView.setVisibility(View.VISIBLE);
+        }
+        else{
+            passwordMatchTextView.setVisibility(View.INVISIBLE);
+            BackgroundWorker backgroundWorker = new BackgroundWorker(this);
+            backgroundWorker.execute("createAccount", username, password);
+
+            
+        }
+
+        //TODO check if username already exists
     }
 }

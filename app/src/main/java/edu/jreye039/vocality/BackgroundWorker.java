@@ -24,6 +24,12 @@ public class BackgroundWorker extends AsyncTask<String, Void, String> {
     }
 
     @Override
+    protected void onPreExecute() {
+        alertDialog = new AlertDialog.Builder(context).create();
+        alertDialog.setTitle("Login Status");
+    }
+
+    @Override
     protected String doInBackground(String... params) {
         String type = params[0];
         String login_url = "http://jesseareyes1996.hostingerapp.com/vocality_login.php";
@@ -45,6 +51,7 @@ public class BackgroundWorker extends AsyncTask<String, Void, String> {
                 OutputStream outputStream = httpURLConnection.getOutputStream();
                 BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
                 String post_data = URLEncoder.encode("username", "UTF-8") + "=" + URLEncoder.encode(username, "UTF-8") + "&" + URLEncoder.encode("password", "UTF-8") + "=" + URLEncoder.encode(password, "UTF-8");
+                //send the POST request to the server
                 bufferedWriter.write(post_data);
                 bufferedWriter.flush();
                 bufferedWriter.close();
@@ -76,19 +83,13 @@ public class BackgroundWorker extends AsyncTask<String, Void, String> {
     }
 
     @Override
-    protected void onPreExecute() {
-        alertDialog = new AlertDialog.Builder(context).create();
-        alertDialog.setTitle("Login Status");
+    protected void onProgressUpdate(Void... values) {
+        super.onProgressUpdate(values);
     }
 
     @Override
     protected void onPostExecute(String result) {
         alertDialog.setMessage(result);
         alertDialog.show();
-    }
-
-    @Override
-    protected void onProgressUpdate(Void... values) {
-        super.onProgressUpdate(values);
     }
 }
