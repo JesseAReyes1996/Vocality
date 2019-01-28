@@ -44,12 +44,13 @@ public class CreateAccount extends AppCompatActivity {
         if(password != confirmPassword){
             passwordMatchTextView.setVisibility(View.VISIBLE);
         }
+        //else attempt to create a new account
         else{
             passwordMatchTextView.setVisibility(View.INVISIBLE);
             BackgroundWorker backgroundWorker = new BackgroundWorker(this);
             backgroundWorker.execute("createAccount", username, password);
 
-            
+
         }
 
         //TODO check if username already exists
