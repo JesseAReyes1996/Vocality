@@ -34,25 +34,24 @@ public class CreateAccount extends AppCompatActivity {
 
     public void onCreateAccount(View view) {
         //get login info
-        String username = usernameEditText.getText().toString();
+        String username = usernameEditText.getText().toString().toLowerCase();
         String password = passwordEditText.getText().toString();
 
         //confirm user's password
         String confirmPassword = confirmPasswordEditText.getText().toString();
 
         //if the passwords don't match, notify the user
-        if(password != confirmPassword){
+        if(!password.equals(confirmPassword)){
             passwordMatchTextView.setVisibility(View.VISIBLE);
         }
-        //else attempt to create a new account
+        //attempt to create a new account
         else{
             passwordMatchTextView.setVisibility(View.INVISIBLE);
             BackgroundWorker backgroundWorker = new BackgroundWorker(this);
             backgroundWorker.execute("createAccount", username, password);
 
-
+            //TODO check if there exists an account with the given username and set a
+            //TODO ViewText to reflect that
         }
-
-        //TODO check if username already exists
     }
 }
