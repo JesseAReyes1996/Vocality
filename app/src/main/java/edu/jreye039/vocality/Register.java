@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class CreateAccount extends AppCompatActivity {
+public class Register extends AppCompatActivity {
 
     EditText usernameEditText;
     EditText passwordEditText;
@@ -18,7 +18,7 @@ public class CreateAccount extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_account);
+        setContentView(R.layout.activity_register);
 
         //for retrieving new user info
         usernameEditText = (EditText) findViewById(R.id.usernameEditText);
@@ -50,10 +50,8 @@ public class CreateAccount extends AppCompatActivity {
         //attempt to create a new account
         else{
             passwordMatchTextView.setVisibility(View.INVISIBLE);
-            CreateAccountBackgroundWorker backgroundWorker = new CreateAccountBackgroundWorker(this);
+            RegisterBackgroundWorker backgroundWorker = new RegisterBackgroundWorker(this);
             backgroundWorker.execute(username, password);
-
-            //TODO start a new activity if success
         }
     }
 }

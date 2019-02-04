@@ -19,9 +19,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 
-public class CreateAccountBackgroundWorker extends AsyncTask<String, Void, String> {
+public class RegisterBackgroundWorker extends AsyncTask<String, Void, String> {
     Context context;
-    CreateAccountBackgroundWorker(Context ctx){
+    RegisterBackgroundWorker(Context ctx){
         context = ctx;
     }
 

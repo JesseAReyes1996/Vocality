@@ -3,10 +3,9 @@ package edu.jreye039.vocality;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 
-public class LogIn extends AppCompatActivity {
+public class Login extends AppCompatActivity {
 
     EditText usernameEditText;
     EditText passwordEditText;
@@ -14,7 +13,7 @@ public class LogIn extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_log_in);
+        setContentView(R.layout.activity_login);
 
         usernameEditText = (EditText) findViewById(R.id.usernameEditText);
         passwordEditText = (EditText) findViewById(R.id.passwordEditText);
@@ -25,7 +24,7 @@ public class LogIn extends AppCompatActivity {
         String username = usernameEditText.getText().toString().toLowerCase();
         String password = passwordEditText.getText().toString();
 
-        LogInBackgroundWorker backgroundWorker = new LogInBackgroundWorker(this);
+        LoginBackgroundWorker backgroundWorker = new LoginBackgroundWorker(this);
         backgroundWorker.execute(username, password);
     }
 }
