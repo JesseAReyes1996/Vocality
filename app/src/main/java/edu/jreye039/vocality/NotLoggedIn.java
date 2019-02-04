@@ -18,7 +18,7 @@ public class NotLoggedIn extends AppCompatActivity {
         logInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent startIntent = new Intent(getApplicationContext(), LogIn.class);
+                Intent startIntent = new Intent(getApplicationContext(), Login.class);
                 startActivity(startIntent);
             }
         });
@@ -28,7 +28,7 @@ public class NotLoggedIn extends AppCompatActivity {
         signUpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent startIntent = new Intent(getApplicationContext(), CreateAccount.class);
+                Intent startIntent = new Intent(getApplicationContext(), Register.class);
                 startActivity(startIntent);
             }
         });

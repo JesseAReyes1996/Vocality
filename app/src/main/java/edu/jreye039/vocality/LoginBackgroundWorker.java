@@ -3,6 +3,7 @@ package edu.jreye039.vocality;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.view.View;
 import android.widget.TextView;
@@ -19,9 +20,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 
-public class LogInBackgroundWorker extends AsyncTask<String, Void, String> {
+public class LoginBackgroundWorker extends AsyncTask<String, Void, String> {
     Context context;
-    LogInBackgroundWorker(Context ctx){
+    LoginBackgroundWorker(Context ctx){
         context = ctx;
     }
 
@@ -90,6 +91,10 @@ public class LogInBackgroundWorker extends AsyncTask<String, Void, String> {
         else if(result.equals("success")){
             TextView incorrectTextView = (TextView) ((Activity) context).findViewById(R.id.incorrectTextView);
             incorrectTextView.setVisibility(View.INVISIBLE);
+
+            //take the user to the main feed
+            Intent startIntent = new Intent(context, Feed.class);
+            context.startActivity(startIntent);
         }
     }
 }
