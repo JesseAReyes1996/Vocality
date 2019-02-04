@@ -3,6 +3,8 @@ package edu.jreye039.vocality;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.view.View;
 import android.widget.TextView;
@@ -25,13 +27,15 @@ public class RegisterBackgroundWorker extends AsyncTask<String, Void, String> {
         context = ctx;
     }
 
+    String username;
+
     @Override
     protected void onPreExecute() {}
 
     @Override
     protected String doInBackground(String... params) {
         //get username and password
-        String username = params[0];
+        username = params[0];
         String password = params[1];
 
         try{
@@ -90,6 +94,16 @@ public class RegisterBackgroundWorker extends AsyncTask<String, Void, String> {
         else if(result.equals("created")){
             TextView usernameExistsTextView = (TextView) ((Activity) context).findViewById(R.id.usernameExistsTextView);
             usernameExistsTextView.setVisibility(View.INVISIBLE);
+
+            //set the user's info
+            SharedPreferences userInfo = context.getSharedPreferences("userInfo", Context.MODE_PRIVATE);
+            SharedPreferences.Editor edit = userInfo.edit();
+            edit.putString("username", username);
+            edit.apply();
+
+            //take the user to the main feed
+            Intent startIntent = new Intent(context, Feed.class);
+            context.startActivity(startIntent);
         }
     }
 }
