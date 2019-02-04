@@ -1,9 +1,11 @@
 package edu.jreye039.vocality;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.view.View;
+import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -19,16 +21,12 @@ import java.net.URLEncoder;
 
 public class CreateAccountBackgroundWorker extends AsyncTask<String, Void, String> {
     Context context;
-    AlertDialog alertDialog;
     CreateAccountBackgroundWorker(Context ctx){
         context = ctx;
     }
 
     @Override
-    protected void onPreExecute() {
-        alertDialog = new AlertDialog.Builder(context).create();
-        alertDialog.setTitle("Login Status");
-    }
+    protected void onPreExecute() {}
 
     @Override
     protected String doInBackground(String... params) {
@@ -85,7 +83,13 @@ public class CreateAccountBackgroundWorker extends AsyncTask<String, Void, Strin
 
     @Override
     protected void onPostExecute(String result) {
-        alertDialog.setMessage(result);
-        alertDialog.show();
+        if(result.equals("taken")){
+            TextView usernameExistsTextView = (TextView) ((Activity) context).findViewById(R.id.usernameExistsTextView);
+            usernameExistsTextView.setVisibility(View.VISIBLE);
+        }
+        else if(result.equals("created")){
+            TextView usernameExistsTextView = (TextView) ((Activity) context).findViewById(R.id.usernameExistsTextView);
+            usernameExistsTextView.setVisibility(View.INVISIBLE);
+        }
     }
 }
