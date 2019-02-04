@@ -17,21 +17,28 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 
-public class BackgroundWorker extends AsyncTask<String, Void, String> {
+public class CreateAccountBackgroundWorker extends AsyncTask<String, Void, String> {
     Context context;
     AlertDialog alertDialog;
-    BackgroundWorker(Context ctx){
+    CreateAccountBackgroundWorker(Context ctx){
         context = ctx;
     }
 
-    public String createOrLogin(String php_url, String user, String pass) {
-        try{
-            //get username and password
-            String username = user;
-            String password = pass;
+    @Override
+    protected void onPreExecute() {
+        alertDialog = new AlertDialog.Builder(context).create();
+        alertDialog.setTitle("Login Status");
+    }
 
+    @Override
+    protected String doInBackground(String... params) {
+        //get username and password
+        String username = params[0];
+        String password = params[1];
+
+        try{
             //create a POST request to the given URL
-            URL url = new URL(php_url);
+            URL url = new URL("http://jesseareyes1996.hostingerapp.com/vocality_createAccount.php");
             //open the connection
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setRequestMethod("POST");
@@ -67,32 +74,6 @@ public class BackgroundWorker extends AsyncTask<String, Void, String> {
             e.printStackTrace();
         }catch(IOException e){
             e.printStackTrace();
-        }
-        return null;
-    }
-
-    @Override
-    protected void onPreExecute() {
-        alertDialog = new AlertDialog.Builder(context).create();
-        alertDialog.setTitle("Login Status");
-    }
-
-    @Override
-    protected String doInBackground(String... params) {
-        //action being performed
-        String type = params[0];
-
-        //get username and password
-        String username = params[1];
-        String password = params[2];
-
-        if(type.equals("login")){
-            String result = createOrLogin("http://jesseareyes1996.hostingerapp.com/vocality_login.php", username, password);
-            return result;
-        }
-        else if(type.equals("createAccount")){
-            String result = createOrLogin("http://jesseareyes1996.hostingerapp.com/vocality_createAccount.php", username, password);
-            return result;
         }
         return null;
     }
