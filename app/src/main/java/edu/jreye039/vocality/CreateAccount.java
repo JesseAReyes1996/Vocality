@@ -3,7 +3,6 @@ package edu.jreye039.vocality;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -47,8 +46,8 @@ public class CreateAccount extends AppCompatActivity {
         //attempt to create a new account
         else{
             passwordMatchTextView.setVisibility(View.INVISIBLE);
-            BackgroundWorker backgroundWorker = new BackgroundWorker(this);
-            backgroundWorker.execute("createAccount", username, password);
+            CreateAccountBackgroundWorker backgroundWorker = new CreateAccountBackgroundWorker(this);
+            backgroundWorker.execute(username, password);
 
             //TODO check if there exists an account with the given username and set a
             //TODO ViewText to reflect that

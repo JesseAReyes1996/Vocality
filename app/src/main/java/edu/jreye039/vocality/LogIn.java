@@ -25,7 +25,7 @@ public class LogIn extends AppCompatActivity {
         String username = usernameEditText.getText().toString().toLowerCase();
         String password = passwordEditText.getText().toString();
 
-        BackgroundWorker backgroundWorker = new BackgroundWorker(this);
-        backgroundWorker.execute("login", username, password);
+        LogInBackgroundWorker backgroundWorker = new LogInBackgroundWorker(this);
+        backgroundWorker.execute(username, password);
     }
 }
