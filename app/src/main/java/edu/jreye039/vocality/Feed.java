@@ -6,6 +6,9 @@ import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.amazonaws.auth.CognitoCachingCredentialsProvider;
+import com.amazonaws.regions.Regions;
+
 public class Feed extends AppCompatActivity {
 
     @Override
@@ -23,4 +26,11 @@ public class Feed extends AppCompatActivity {
             startActivity(startIntent);
         }
     }
+
+    // Initialize the Amazon Cognito credentials provider
+    CognitoCachingCredentialsProvider credentialsProvider = new CognitoCachingCredentialsProvider(
+            getApplicationContext(),
+            "us-west-2:af04cf4e-54ef-4854-97aa-8613ba65e9a9", // Identity pool ID
+            Regions.US_WEST_2 // Region
+    );
 }
