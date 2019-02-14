@@ -24,6 +24,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".Register" />
+        <activity android:name=".FriendsList"/>
+        <activity android:name=".SearchFriends"/>
         <activity android:name=".Login" />
         <activity android:name=".NotLoggedIn" />
         <service
