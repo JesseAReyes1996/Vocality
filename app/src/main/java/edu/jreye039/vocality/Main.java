@@ -2,6 +2,7 @@ package edu.jreye039.vocality;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -10,6 +11,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ListView;
 
 import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
@@ -85,6 +89,15 @@ public class Main extends AppCompatActivity {
         setTransferUtility();
 
         uploadFileToS3();
+
+        Button friendbtn = (Button) findViewById(R.id.friendbtn);
+        friendbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent startIntent = new Intent(getApplicationContext(), FriendsList.class);
+                startActivity(startIntent);
+            }
+        });
         //
     }
 
@@ -124,4 +137,5 @@ public class Main extends AppCompatActivity {
                 fileToUpload       /* The file where the data to upload exists */
         );
     }
+
 }
