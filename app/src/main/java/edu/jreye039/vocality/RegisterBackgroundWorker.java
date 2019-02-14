@@ -1,7 +1,6 @@
 package edu.jreye039.vocality;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -102,7 +101,7 @@ public class RegisterBackgroundWorker extends AsyncTask<String, Void, String> {
             edit.apply();
 
             //take the user to the main feed
-            Intent startIntent = new Intent(context, Feed.class);
+            Intent startIntent = new Intent(context, Main.class);
             context.startActivity(startIntent);
         }
     }

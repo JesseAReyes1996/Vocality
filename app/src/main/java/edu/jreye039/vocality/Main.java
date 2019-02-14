@@ -3,10 +3,13 @@ package edu.jreye039.vocality;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
+import android.view.MenuItem;
 
 import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
@@ -17,12 +20,12 @@ import com.amazonaws.services.s3.AmazonS3Client;
 
 import java.io.File;
 
-public class Feed extends AppCompatActivity {
+public class Main extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_feed);
+        setContentView(R.layout.activity_main);
 
         //check if the is the user is logged in
         SharedPreferences userInfo = getSharedPreferences("userInfo", Context.MODE_PRIVATE);
@@ -33,6 +36,41 @@ public class Feed extends AppCompatActivity {
             Intent startIntent = new Intent(getApplicationContext(), NotLoggedIn.class);
             startActivity(startIntent);
         }
+
+        ///
+        BottomNavigationView bottomNavView = findViewById(R.id.bottom_navigation);
+
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FeedFragment()).commit();
+
+        bottomNavView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                Fragment selectedFragment = null;
+
+                switch (menuItem.getItemId()) {
+                    case R.id.nav_feed:
+                        selectedFragment = new FeedFragment();
+                        break;
+                    case R.id.nav_search:
+                        selectedFragment = new SearchFragment();
+                        break;
+                    case R.id.nav_new_recording:
+                        selectedFragment = new NewRecordingFragment();
+                        break;
+                    case R.id.nav_notifications:
+                        selectedFragment = new NotificationsFragment();
+                        break;
+                    case R.id.nav_profile:
+                        selectedFragment = new ProfileFragment();
+                        break;
+                }
+
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
+
+                return true;
+            }
+        });
+        ///
 
         //
         if(fileToUpload == null || !fileToUpload.exists()){
