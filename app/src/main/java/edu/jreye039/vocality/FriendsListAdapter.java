@@ -36,7 +36,7 @@ public class FriendsListAdapter extends BaseAdapter {
     @Override
     public View getView(int i, View convertView, ViewGroup parent) {
         View v = mInflater.inflate(R.layout.friends_list_layout,null);
-        TextView friendsListName=(TextView)v.findViewById(R.id.friendsInvitationNameTextView);
+        TextView friendsListName = (TextView)v.findViewById(R.id.friendsInvitationNameTextView);
 
         friendsListName.setText(friendsListUsername.get(i));
         return v;
