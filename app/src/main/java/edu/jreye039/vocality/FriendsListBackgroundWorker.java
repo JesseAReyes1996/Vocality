@@ -3,6 +3,7 @@ package edu.jreye039.vocality;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.ListView;
 
 import java.io.BufferedReader;
@@ -84,9 +85,10 @@ public class FriendsListBackgroundWorker extends AsyncTask<String, Void, String>
     @Override
     protected void onPostExecute(String result) {
         if(!friendslist.isEmpty()) {
-            FriendsListAdapter friendslistadapter = new FriendsListAdapter(this.context, friendslist);
+
+            //TODO run time error here, myListView.setAdapter causes app to crash
+            FriendsListAdapter friendslistadapter = new FriendsListAdapter(context, friendslist);
             myListView.setAdapter(friendslistadapter);
         }
     }
-
 }

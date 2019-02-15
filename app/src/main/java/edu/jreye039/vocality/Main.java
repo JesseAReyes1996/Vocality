@@ -89,15 +89,6 @@ public class Main extends AppCompatActivity {
         setTransferUtility();
 
         uploadFileToS3();
-
-        Button friendbtn = (Button) findViewById(R.id.friendbtn);
-        friendbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent startIntent = new Intent(getApplicationContext(), FriendsList.class);
-                startActivity(startIntent);
-            }
-        });
         //
     }
 

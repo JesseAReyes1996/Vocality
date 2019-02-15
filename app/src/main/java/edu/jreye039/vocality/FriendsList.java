@@ -19,8 +19,8 @@ public class FriendsList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friend);
 
-        friendsList =  findViewById(R.id.friendsList);
-        addFriendBtn =  findViewById(R.id.addFriendsBtn);
+        friendsList = findViewById(R.id.friendsList);
+        addFriendBtn = findViewById(R.id.addFriendsBtn);
 
         SharedPreferences userInfo = getSharedPreferences("userInfo", Context.MODE_PRIVATE);
         String username = userInfo.getString("username", "");
