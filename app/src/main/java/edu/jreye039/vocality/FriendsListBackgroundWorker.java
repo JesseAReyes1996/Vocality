@@ -23,7 +23,7 @@ import java.util.List;
 
 public class FriendsListBackgroundWorker extends AsyncTask<String, Void, String> {
     Context context;
-    FriendsListBackgroundWorker(Context c){ context = c;}
+    FriendsListBackgroundWorker(Context ctx){ context = ctx;}
 
     String username;
     List<String> friendslist = new ArrayList<>();
@@ -91,4 +91,5 @@ public class FriendsListBackgroundWorker extends AsyncTask<String, Void, String>
             myListView.setAdapter(friendslistadapter);
         }
     }
+
 }
