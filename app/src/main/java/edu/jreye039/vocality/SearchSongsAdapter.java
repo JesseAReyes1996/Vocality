@@ -13,16 +13,37 @@ public class SearchSongsAdapter extends RecyclerView.Adapter<SearchSongsAdapter.
 
     private ArrayList<SearchSongsItem> mSearchSongsList;
 
+    private OnItemClickListener mListener;
+
+    public interface OnItemClickListener{
+        void onItemClick(int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener){
+        mListener = listener;
+    }
+
     public static class SearchSongsViewHolder extends RecyclerView.ViewHolder {
 
         public TextView title;
         public TextView artist;
 
-
-        public SearchSongsViewHolder(@NonNull View itemView) {
+        public SearchSongsViewHolder(@NonNull View itemView, final OnItemClickListener listener){
             super(itemView);
             title = itemView.findViewById(R.id.titleTextView);
             artist = itemView.findViewById(R.id.artistTextView);
+
+            itemView.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    if(listener != null){
+                        int position = getAdapterPosition();
+                        if(position != RecyclerView.NO_POSITION){
+                            listener.onItemClick(position);
+                        }
+                    }
+                }
+            });
         }
     }
 
@@ -34,7 +55,7 @@ public class SearchSongsAdapter extends RecyclerView.Adapter<SearchSongsAdapter.
     @Override
     public SearchSongsViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.song_item, viewGroup, false);
-        SearchSongsViewHolder svh = new SearchSongsViewHolder(v);
+        SearchSongsViewHolder svh = new SearchSongsViewHolder(v, mListener);
         return svh;
     }
 
@@ -44,7 +65,6 @@ public class SearchSongsAdapter extends RecyclerView.Adapter<SearchSongsAdapter.
 
         searchSongsViewHolder.title.setText(currentItem.getmSongTitle());
         searchSongsViewHolder.artist.setText(currentItem.getmArtist());
-
     }
 
     @Override

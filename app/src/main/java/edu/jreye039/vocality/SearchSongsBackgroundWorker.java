@@ -25,7 +25,7 @@ public class SearchSongsBackgroundWorker extends AsyncTask<String, Void, String>
     Context context;
 
     private RecyclerView songsRecyclerView;
-    private RecyclerView.Adapter songsAdapter;
+    private SearchSongsAdapter songsAdapter;
 
     private ArrayList<SearchSongsItem> songs = new ArrayList<>();
 
@@ -98,12 +98,15 @@ public class SearchSongsBackgroundWorker extends AsyncTask<String, Void, String>
     @Override
     protected void onPostExecute(String result) {
 
+        //contains the results with the format ['artist', 'title', 'aws_s3_link']
+        final String[] rows;
+
         if(!result.equals("no results")){
+
             //empty the songs array
             songs = new ArrayList<>();
 
-            String[] rows = result.split("><");
-            Log.d("ROWS", rows[0]);
+            rows = result.split("><");
             //iterate through the results
             for(String row : rows){
                 String[] columns = row.split("<>");
@@ -114,6 +117,17 @@ public class SearchSongsBackgroundWorker extends AsyncTask<String, Void, String>
             //update the recycler view with the new search results
             songsAdapter = new SearchSongsAdapter(songs);
             songsRecyclerView.setAdapter(songsAdapter);
+
+            //set an OnClickListener on the displayed items
+            songsAdapter.setOnItemClickListener(new SearchSongsAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(int position) {
+                    String chosenItem = rows[position];
+                    String[] columns = chosenItem.split("<>");
+                    //holds the AWS S3 link for the chosen song
+                    Log.d("GIRL", columns[2]);
+                }
+            });
         }
     }
 }
