@@ -16,7 +16,7 @@ public class NewRecordingFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_new_recording, container, false);
 
         //start new recording activity
-        Intent startIntent = new Intent(getActivity().getApplicationContext(), NewRecording.class);
+        Intent startIntent = new Intent(getActivity().getApplicationContext(), SearchSongs.class);
         getActivity().startActivity(startIntent);
 
         return v;

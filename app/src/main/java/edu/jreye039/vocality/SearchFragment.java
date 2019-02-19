@@ -1,5 +1,6 @@
 package edu.jreye039.vocality;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,25 +13,25 @@ import android.widget.Button;
 
 public class SearchFragment extends Fragment {
 
+    private Button friendbtn;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         ///
         View v = inflater.inflate(R.layout.fragment_search, container, false);
 
-        Button friendbtn = (Button) v.findViewById(R.id.friendbtn);
+        friendbtn = (Button) v.findViewById(R.id.friendbtn);
 
         friendbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent startIntent = new Intent(getActivity().getApplicationContext(), FriendsList.class);
+                Intent startIntent = new Intent(getActivity(), FriendsList.class);
                 getActivity().startActivity(startIntent);
             }
         });
 
         return v;
         ///
-
     }
 }
