@@ -34,6 +34,13 @@ public class NewRecording extends AppCompatActivity {
     MediaRecorder mediaRecorder;
     MediaPlayer mediaPlayer;
 
+    //the AWS S3 link where the backing track is stored
+    String s3_key;
+
+    //temp file/directory to store the S3 object
+    File outputDir;
+    File tempFile;
+
     final int REQUEST_PERMISSION_CODE = 1000;
 
     @Override
@@ -41,6 +48,28 @@ public class NewRecording extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_recording);
 
+        //get the S3 link
+        s3_key = getIntent().getStringExtra("AWS_S3_KEY");
+
+        //create the temp file
+        outputDir = this.getCacheDir();
+        try {
+            tempFile = File.createTempFile("temp",".3gp", outputDir);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Log.d("FILENAME", tempFile.toString());
+        Log.d("S3 LINK", s3_key);
+
+        //download the file
+        credentialsProvider();
+
+        setTransferUtility();
+
+        downloadFileFromS3();
+
+        //check if the user has allowed Vocality to access their storage/mic
         if(!checkPermissionFromDevice()){
             requestPermission();
         }
@@ -64,6 +93,16 @@ public class NewRecording extends AppCompatActivity {
                     //create the path to save the file to
                     String fileID = UUID.randomUUID().toString();
                     pathSave = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + fileID + "_vocal_recording.3gp";
+
+                    mediaPlayer = new MediaPlayer();
+                    try{
+                        mediaPlayer.setDataSource(tempFile.toString());
+                        mediaPlayer.prepare();
+                    }catch(IOException e){
+                        e.printStackTrace();
+                    }
+                    mediaPlayer.start();
+
                     setupMediaRecorder();
                     try{
                         mediaRecorder.prepare();
@@ -93,6 +132,11 @@ public class NewRecording extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mediaRecorder.stop();
+                if(mediaPlayer != null){
+                    mediaPlayer.stop();
+                    mediaPlayer.release();
+                    setupMediaRecorder();
+                }
                 stopRecordBtn.setEnabled(false);
                 startPlayBtn.setEnabled(true);
                 startRecordBtn.setEnabled(true);
@@ -227,6 +271,15 @@ public class NewRecording extends AppCompatActivity {
                 "vocality", /* The bucket to upload to */
                 fileKey,           /* The file's name on S3 */
                 s3Upload           /* The file to be uploaded's local location */
+        );
+    }
+
+    public void downloadFileFromS3(){
+
+        TransferObserver transferObserver = transferUtility.download(
+            "vocality", /* The bucket to download from */
+            s3_key,            /* The key for the object to download */
+            tempFile           /* The file to download the object to */
         );
     }
 }

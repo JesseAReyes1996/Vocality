@@ -1,12 +1,9 @@
 package edu.jreye039.vocality;
 
-import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.View;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -122,10 +119,16 @@ public class SearchSongsBackgroundWorker extends AsyncTask<String, Void, String>
             songsAdapter.setOnItemClickListener(new SearchSongsAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(int position) {
+                    //picks the song the user clicked on
                     String chosenItem = rows[position];
                     String[] columns = chosenItem.split("<>");
                     //holds the AWS S3 link for the chosen song
-                    Log.d("GIRL", columns[2]);
+                    String s3_key = columns[2];
+
+                    //take the user to record their song
+                    Intent startIntent = new Intent(context, NewRecording.class);
+                    startIntent.putExtra("AWS_S3_KEY", s3_key);
+                    context.startActivity(startIntent);
                 }
             });
         }
