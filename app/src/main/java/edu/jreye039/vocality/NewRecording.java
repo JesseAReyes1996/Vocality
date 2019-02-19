@@ -59,9 +59,11 @@ public class NewRecording extends AppCompatActivity {
         startRecordBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //check if device has given read/write permission to Vocality
                 if(checkPermissionFromDevice()){
+                    //create the path to save the file to
                     String fileID = UUID.randomUUID().toString();
-                    pathSave = Environment.getExternalStorageDirectory().getAbsolutePath()+"/"+ fileID + "_vocal_recording.3gp";
+                    pathSave = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + fileID + "_vocal_recording.3gp";
                     setupMediaRecorder();
                     try{
                         mediaRecorder.prepare();
@@ -78,10 +80,9 @@ public class NewRecording extends AppCompatActivity {
                     s3Upload = new File(pathSave);
                     fileKey = fileID + "_vocal_recording.3gp";
 
-                    startPlayBtn.setEnabled(false);
-                    stopPlayBtn.setEnabled(false);
                     Toast.makeText(NewRecording.this, "Recording...", Toast.LENGTH_SHORT).show();
                 }
+                //ask the user for permission for read/write and mic access
                 else{
                     requestPermission();
                 }
@@ -175,11 +176,9 @@ public class NewRecording extends AppCompatActivity {
         {
             case REQUEST_PERMISSION_CODE:
             {
-                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show();
-                }
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){}
                 else{
-                    Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Permission Denied: Please allow Vocality to access the device's microphone/storage", Toast.LENGTH_LONG).show();
                 }
             }
                 break;
