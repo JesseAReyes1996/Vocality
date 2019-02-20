@@ -1,6 +1,8 @@
 package edu.jreye039.vocality;
 
 import android.Manifest;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
@@ -58,9 +60,6 @@ public class NewRecording extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        Log.d("FILENAME", tempFile.toString());
-        Log.d("S3 LINK", s3_key);
 
         //download the file
         credentialsProvider();
@@ -196,6 +195,15 @@ public class NewRecording extends AppCompatActivity {
                     setTransferUtility();
 
                     uploadFileToS3();
+
+                    //get the user's username
+                    SharedPreferences userInfo = getSharedPreferences("userInfo", Context.MODE_PRIVATE);
+                    String username = userInfo.getString("username", "");
+
+                    //attach the recording to the user
+                    String title = s3_key.substring(0, s3_key.length() - 4);
+                    NewRecordingBackgroundWorker backgroundWorker = new NewRecordingBackgroundWorker(getApplicationContext());
+                    backgroundWorker.execute(username, title, fileKey);
                 }
             }
         });
