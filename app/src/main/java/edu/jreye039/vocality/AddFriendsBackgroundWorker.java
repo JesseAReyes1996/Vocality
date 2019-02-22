@@ -2,10 +2,10 @@ package edu.jreye039.vocality;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.util.Log;
-import android.widget.ListView;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -14,31 +14,25 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
 
-public class FriendsListBackgroundWorker extends AsyncTask<String, Void, String> {
-    Context context;
-    FriendsListBackgroundWorker(Context ctx){ context = ctx;}
-
+public class AddFriendsBackgroundWorker extends AsyncTask<String, Void, String> {
     String username;
-    List<String> friendslist = new ArrayList<>();
-    ListView myListView;
+    String friendsname;
+    Context context;
 
-    @Override
-    protected void onPreExecute() {}
+    AddFriendsBackgroundWorker(Context c){context = c;}
 
-    @Override
     protected String doInBackground(String... params) {
-            username = params[0];
-
+        username = params[0];
+        friendsname = params[1];
         try{
-            URL url = new URL("http://jesseareyes1996.hostingerapp.com/vocality_friends_list.php");
+            URL url = new URL("http://jesseareyes1996.hostingerapp.com/vocality_request_friends.php");
             //open the connection
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setRequestMethod("POST");
@@ -48,26 +42,29 @@ public class FriendsListBackgroundWorker extends AsyncTask<String, Void, String>
             //initiate the POST request for username
             OutputStream outputStream = httpURLConnection.getOutputStream();
             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
-            String post_data = URLEncoder.encode("username", "UTF-8") + "=" + URLEncoder.encode(username, "UTF-8");
-
+            String post_data = URLEncoder.encode("username", "UTF-8") + "=" + URLEncoder.encode(username, "UTF-8") + "&" + URLEncoder.encode("friendsname", "UTF-8") + "=" + URLEncoder.encode(friendsname, "UTF-8");
             //send the POST request to the server
             bufferedWriter.write(post_data);
             bufferedWriter.flush();
             bufferedWriter.close();
             outputStream.close();
 
+            //receive the result
             InputStream inputStream = httpURLConnection.getInputStream();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "iso-8859-1"));
+            String result = "";
             String line = "";
-            while((line = bufferedReader.readLine()) != null && line.equals("no friend!") == false){
-                friendslist.add(line);
+            while((line = bufferedReader.readLine()) != null){
+                result += line;
             }
             bufferedReader.close();
             inputStream.close();
             //close the connection
             httpURLConnection.disconnect();
 
-            return null;
+            return result;
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         } catch (ProtocolException e) {
             e.printStackTrace();
         } catch (MalformedURLException e) {
@@ -77,7 +74,6 @@ public class FriendsListBackgroundWorker extends AsyncTask<String, Void, String>
         }
         return null;
     }
-
     @Override
     protected void onProgressUpdate(Void... values) {
         super.onProgressUpdate(values);
@@ -85,13 +81,14 @@ public class FriendsListBackgroundWorker extends AsyncTask<String, Void, String>
 
     @Override
     protected void onPostExecute(String result) {
-        if(!friendslist.isEmpty()) {
-
-            //TODO run time error here, myListView.setAdapter causes app to crash
-            ListView friendsList = ((Activity)context).findViewById(R.id.friendsList);
-            FriendsListAdapter friendslistadapter = new FriendsListAdapter(context, friendslist);
-            friendsList.setAdapter(friendslistadapter);
+        if(result.equals("sended successfully")){
+            TextView addFriendsfeedbackTextView = (TextView)((Activity)context).findViewById(R.id.addFriendsfeedbackTextView);
+            addFriendsfeedbackTextView.setVisibility(View.VISIBLE);
+            addFriendsfeedbackTextView.setText("your friend request sent successfully");
+        } else if(result.equals("already")){
+            TextView addFriendsfeedbackTextView = (TextView)((Activity)context).findViewById(R.id.addFriendsfeedbackTextView);
+            addFriendsfeedbackTextView.setVisibility(View.VISIBLE);
+            addFriendsfeedbackTextView.setText(friendsname + " is already in your friends list");
         }
     }
-
 }

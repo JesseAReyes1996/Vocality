@@ -1,5 +1,7 @@
 package edu.jreye039.vocality;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -34,7 +36,11 @@ public class SearchFriends extends AppCompatActivity {
     }
 
     public void onAddFriends(View v){
-        //addFriendB
-
+        resultFriendsTextView = (TextView) findViewById(R.id.resultFriendsTextView);
+        String friendname = resultFriendsTextView.getText().toString().toLowerCase();
+        SharedPreferences userInfo = getSharedPreferences("userInfo", Context.MODE_PRIVATE);
+        String username = userInfo.getString("username", "");
+        AddFriendsBackgroundWorker backgroundWorker = new AddFriendsBackgroundWorker(this);
+        backgroundWorker.execute(username,friendname);
     }
 }
