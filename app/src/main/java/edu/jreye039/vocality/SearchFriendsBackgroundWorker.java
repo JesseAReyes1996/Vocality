@@ -86,7 +86,7 @@ public class SearchFriendsBackgroundWorker extends AsyncTask<String, Void, Strin
         TextView resultFriendsTextView = (TextView) ((Activity) context).findViewById(R.id.resultFriendsTextView);
         resultFriendsTextView.setVisibility(View.VISIBLE);
         resultFriendsTextView.setText(result);
-        if(result.equals("no user found!")){
+        if(result.equals("No user found!")){
             //for user did not find
         }
         else {

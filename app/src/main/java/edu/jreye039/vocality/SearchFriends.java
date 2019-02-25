@@ -31,8 +31,13 @@ public class SearchFriends extends AppCompatActivity {
     public void onSearchFriends(View v){
         String username = searchFriendsEditText.getText().toString().toLowerCase();
 
-        SearchFriendsBackgroundWorker backgroundWorker = new SearchFriendsBackgroundWorker(this);
-        backgroundWorker.execute(username);
+        //check if the is the user is trying to add themselves
+        SharedPreferences userInfo = getSharedPreferences("userInfo", Context.MODE_PRIVATE);
+        String currUser = userInfo.getString("username", "");
+        if(!username.equals(currUser)){
+            SearchFriendsBackgroundWorker backgroundWorker = new SearchFriendsBackgroundWorker(this);
+            backgroundWorker.execute(username);
+        }
     }
 
     public void onAddFriends(View v){
