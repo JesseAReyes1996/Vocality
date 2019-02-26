@@ -1,7 +1,6 @@
 package edu.jreye039.vocality;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 
@@ -18,36 +17,38 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
-public class SearchSongsBackgroundWorker extends AsyncTask<String, Void, String> {
+public class FeedBackgroundWorker extends AsyncTask<String, Void, String> {
+
     Context context;
 
-    private RecyclerView songsRecyclerView;
-    private SearchSongsAdapter songsAdapter;
+    private RecyclerView feedRecyclerView;
+    private FeedAdapter feedAdapter;
 
-    private ArrayList<SearchSongsItem> songs = new ArrayList<>();
+    private ArrayList<FeedItem> userRecordings = new ArrayList<>();
 
-    SearchSongsBackgroundWorker(Context ctx, RecyclerView rv){
+    FeedBackgroundWorker(Context ctx, RecyclerView rv){
         context = ctx;
-        songsRecyclerView = rv;
+        feedRecyclerView = rv;
     }
 
-    String songRequested;
+    //username of the currently logged in user
+    String username;
 
     @Override
     protected void onPreExecute() {
         //clear the recycler view
-        songsAdapter = new SearchSongsAdapter(songs);
-        songsRecyclerView.setAdapter(songsAdapter);
+        feedAdapter = new FeedAdapter(userRecordings);
+        feedRecyclerView.setAdapter(feedAdapter);
     }
 
     @Override
     protected String doInBackground(String... params) {
-        //the user's requested song
-        songRequested = params[0];
+        //the user's username
+        username = params[0];
 
         try{
             //create a POST request to the given URL
-            URL url = new URL("http://jesseareyes1996.hostingerapp.com/vocality_search_songs.php");
+            URL url = new URL("http://jesseareyes1996.hostingerapp.com/vocality_feed.php");
             //open the connection
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setRequestMethod("POST");
@@ -57,7 +58,7 @@ public class SearchSongsBackgroundWorker extends AsyncTask<String, Void, String>
             //initiate the POST request for the user's requested song
             OutputStream outputStream = httpURLConnection.getOutputStream();
             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
-            String post_data = URLEncoder.encode("song", "UTF-8") + "=" + URLEncoder.encode(songRequested, "UTF-8");
+            String post_data = URLEncoder.encode("username", "UTF-8") + "=" + URLEncoder.encode(username, "UTF-8");
             //send the POST request to the server
             bufferedWriter.write(post_data);
             bufferedWriter.flush();
@@ -95,28 +96,28 @@ public class SearchSongsBackgroundWorker extends AsyncTask<String, Void, String>
     @Override
     protected void onPostExecute(String result) {
 
-        //contains the results with the format ['artist', 'title', 'aws_s3_link']
+        //contains the results with the format [username, title, aws_s3_key]
         final String[] rows;
 
         if(!result.equals("no results")){
 
-            //empty the songs array
-            songs = new ArrayList<>();
+            //empty the recordings array
+            userRecordings = new ArrayList<>();
 
             rows = result.split("><");
             //iterate through the results
             for(String row : rows){
                 String[] columns = row.split("<>");
-                //add the title/artist
-                songs.add(new SearchSongsItem(columns[1],columns[0]));
+                //add the title/user who recorded
+                userRecordings.add(new FeedItem(columns[1],columns[0]));
             }
 
             //update the recycler view with the new search results
-            songsAdapter = new SearchSongsAdapter(songs);
-            songsRecyclerView.setAdapter(songsAdapter);
+            feedAdapter = new FeedAdapter(userRecordings);
+            feedRecyclerView.setAdapter(feedAdapter);
 
             //set an OnClickListener on the displayed items
-            songsAdapter.setOnItemClickListener(new SearchSongsAdapter.OnItemClickListener() {
+            /*songsAdapter.setOnItemClickListener(new SearchSongsAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(int position) {
                     //picks the song the user clicked on
@@ -130,7 +131,7 @@ public class SearchSongsBackgroundWorker extends AsyncTask<String, Void, String>
                     startIntent.putExtra("AWS_S3_KEY", s3_key);
                     context.startActivity(startIntent);
                 }
-            });
+            });*/
         }
     }
 }

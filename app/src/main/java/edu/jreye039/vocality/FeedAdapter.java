@@ -40,6 +40,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
     public void onBindViewHolder(@NonNull FeedViewHolder feedViewHolder, int i) {
         FeedItem currentItem = mFeedList.get(i);
 
+        //in the event that the title is too long and will overlap the buttons
+        if(currentItem.getmCoverTitle().length() >= 25){
+            feedViewHolder.mCoverTitle.setTextSize(18);
+        }
         feedViewHolder.mCoverTitle.setText(currentItem.getmCoverTitle());
         feedViewHolder.mUser.setText("covered by " + currentItem.getmUsername());
 
