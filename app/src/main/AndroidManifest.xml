@@ -17,20 +17,20 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SearchSongs"></activity>
-        <activity android:name=".Main">
+        <activity android:name=".Main" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".NewRecording" />
-        <activity android:name=".Register" />
-        <activity android:name=".FriendsList" />
-        <activity android:name=".SearchFriends" />
-        <activity android:name=".Login" />
-        <activity android:name=".NotLoggedIn" />
+        <activity android:name=".SearchSongs" android:screenOrientation="portrait"/>
+        <activity android:name=".NewRecording" android:screenOrientation="portrait"/>
+        <activity android:name=".Register" android:screenOrientation="portrait"/>
+        <activity android:name=".FriendsList" android:screenOrientation="portrait"/>
+        <activity android:name=".SearchFriends" android:screenOrientation="portrait"/>
+        <activity android:name=".Login" android:screenOrientation="portrait"/>
+        <activity android:name=".NotLoggedIn" android:screenOrientation="portrait"/>
 
         <service android:name="org.eclipse.paho.android.service.MqttService" />
         <service

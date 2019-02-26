@@ -26,41 +26,40 @@ public class Main extends AppCompatActivity{
             Intent startIntent = new Intent(getApplicationContext(), NotLoggedIn.class);
             startActivity(startIntent);
         }
+        else{
+            BottomNavigationView bottomNavView = findViewById(R.id.bottom_navigation);
 
-        ///
-        BottomNavigationView bottomNavView = findViewById(R.id.bottom_navigation);
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FeedFragment()).commit();
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FeedFragment()).commit();
+            bottomNavView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                    Fragment selectedFragment = null;
 
-        bottomNavView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                Fragment selectedFragment = null;
+                    switch (menuItem.getItemId()) {
+                        case R.id.nav_feed:
+                            selectedFragment = new FeedFragment();
+                            break;
+                        case R.id.nav_search:
+                            selectedFragment = new SearchFragment();
+                            break;
+                        case R.id.nav_new_recording:
+                            selectedFragment = new NewRecordingFragment();
+                            break;
+                        case R.id.nav_notifications:
+                            selectedFragment = new NotificationsFragment();
+                            break;
+                        case R.id.nav_profile:
+                            selectedFragment = new ProfileFragment();
+                            break;
+                    }
 
-                switch (menuItem.getItemId()) {
-                    case R.id.nav_feed:
-                        selectedFragment = new FeedFragment();
-                        break;
-                    case R.id.nav_search:
-                        selectedFragment = new SearchFragment();
-                        break;
-                    case R.id.nav_new_recording:
-                        selectedFragment = new NewRecordingFragment();
-                        break;
-                    case R.id.nav_notifications:
-                        selectedFragment = new NotificationsFragment();
-                        break;
-                    case R.id.nav_profile:
-                        selectedFragment = new ProfileFragment();
-                        break;
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
+
+                    return true;
                 }
-
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
-
-                return true;
-            }
-        });
-        ///
+            });
+        }
     }
 
 }
