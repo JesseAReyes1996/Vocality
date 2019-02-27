@@ -96,7 +96,7 @@ public class FeedBackgroundWorker extends AsyncTask<String, Void, String> {
     @Override
     protected void onPostExecute(String result) {
 
-        //contains the results with the format [username, title, aws_s3_key]
+        //contains the results with the format [username, title, aws_s3_key, private]
         final String[] rows;
 
         if(!result.equals("no results")){
@@ -108,8 +108,11 @@ public class FeedBackgroundWorker extends AsyncTask<String, Void, String> {
             //iterate through the results
             for(String row : rows){
                 String[] columns = row.split("<>");
-                //add the title/user who recorded
-                userRecordings.add(new FeedItem(columns[1],columns[0]));
+                //if the recording is not private
+                if(columns[3].equals("0")){
+                    //add the title/user who recorded
+                    userRecordings.add(new FeedItem(columns[1],columns[0]));
+                }
             }
 
             //update the recycler view with the new search results
