@@ -2,6 +2,7 @@ package edu.jreye039.vocality;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
@@ -110,6 +111,7 @@ public class NewRecording extends AppCompatActivity {
                         startPlayBtn.setEnabled(false);
                         startRecordBtn.setEnabled(false);
                         stopPlayBtn.setEnabled(false);
+                        uploadBtn.setEnabled(false);
                     } catch(IOException e){
                         e.printStackTrace();
                     }
@@ -188,12 +190,9 @@ public class NewRecording extends AppCompatActivity {
                     Log.d("AWS S3 UPLOAD", "FILE NOT FOUND");
                 }
                 else{
-                    Log.d("AWS S3 UPLOAD", "FILE FOUND, UPLOADING");
-
+                    //upload the file to AWS S3
                     credentialsProvider();
-
                     setTransferUtility();
-
                     uploadFileToS3();
 
                     //get the user's username
@@ -204,6 +203,10 @@ public class NewRecording extends AppCompatActivity {
                     String title = s3_key.substring(0, s3_key.length() - 4);
                     NewRecordingBackgroundWorker backgroundWorker = new NewRecordingBackgroundWorker(getApplicationContext());
                     backgroundWorker.execute(username, title, fileKey);
+
+                    //take the user to the main feed
+                    Intent startIntent = new Intent(NewRecording.this, Main.class);
+                    NewRecording.this.startActivity(startIntent);
                 }
             }
         });
