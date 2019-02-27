@@ -6,7 +6,6 @@ import android.os.AsyncTask;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -83,9 +82,13 @@ public class AddFriendsBackgroundWorker extends AsyncTask<String, Void, String> 
     @Override
     protected void onPostExecute(String result) {
         if(result.equals("sended successfully")){
-            Toast.makeText(context, "your friend request sent successfully", Toast.LENGTH_LONG).show();
+            TextView addFriendsfeedbackTextView = (TextView)((Activity)context).findViewById(R.id.addFriendsfeedbackTextView);
+            addFriendsfeedbackTextView.setVisibility(View.VISIBLE);
+            addFriendsfeedbackTextView.setText("your friend request sent successfully");
         } else if(result.equals("already")){
-            Toast.makeText(context, friendsname + " is already in your friends list", Toast.LENGTH_LONG).show();
+            TextView addFriendsfeedbackTextView = (TextView)((Activity)context).findViewById(R.id.addFriendsfeedbackTextView);
+            addFriendsfeedbackTextView.setVisibility(View.VISIBLE);
+            addFriendsfeedbackTextView.setText(friendsname + " is already in your friends list");
         }
     }
 }

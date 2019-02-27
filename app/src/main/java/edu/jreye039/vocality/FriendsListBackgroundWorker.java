@@ -27,8 +27,6 @@ public class FriendsListBackgroundWorker extends AsyncTask<String, Void, String>
     FriendsListBackgroundWorker(Context ctx){ context = ctx;}
 
     String username;
-    List<String> friendslist = new ArrayList<>();
-    ListView myListView;
 
     @Override
     protected void onPreExecute() {}
@@ -59,15 +57,16 @@ public class FriendsListBackgroundWorker extends AsyncTask<String, Void, String>
             InputStream inputStream = httpURLConnection.getInputStream();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "iso-8859-1"));
             String line = "";
-            while((line = bufferedReader.readLine()) != null && line.equals("no friend!") == false){
-                friendslist.add(line);
+            String result = "";
+            while((line = bufferedReader.readLine()) != null ){
+                result += line;
             }
             bufferedReader.close();
             inputStream.close();
             //close the connection
             httpURLConnection.disconnect();
 
-            return null;
+            return result;
         } catch (ProtocolException e) {
             e.printStackTrace();
         } catch (MalformedURLException e) {
@@ -85,13 +84,10 @@ public class FriendsListBackgroundWorker extends AsyncTask<String, Void, String>
 
     @Override
     protected void onPostExecute(String result) {
-        if(!friendslist.isEmpty()) {
-
-            //TODO run time error here, myListView.setAdapter causes app to crash
-            ListView friendsList = ((Activity)context).findViewById(R.id.friendsList);
-            FriendsListAdapter friendslistadapter = new FriendsListAdapter(context, friendslist);
-            friendsList.setAdapter(friendslistadapter);
-        }
+        String[] a =result.split("<br>");
+        ListView friendsList = ((Activity)context).findViewById(R.id.friendsList);
+        FriendsListAdapter friendslistadapter = new FriendsListAdapter(this.context, a);
+        friendsList.setAdapter(friendslistadapter);
     }
-
 }
+
