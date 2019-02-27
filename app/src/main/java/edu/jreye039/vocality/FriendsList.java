@@ -28,6 +28,8 @@ public class FriendsList extends AppCompatActivity {
         FriendsListBackgroundWorker backgroundWorker = new FriendsListBackgroundWorker(this);
         backgroundWorker.execute(username);
 
+        ReceiveRequestListBackgroundWorker requestBackgroundWorker = new ReceiveRequestListBackgroundWorker(this);
+        requestBackgroundWorker.execute(username);
 
     }
 

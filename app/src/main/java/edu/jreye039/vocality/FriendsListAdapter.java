@@ -11,21 +11,21 @@ import java.util.List;
 
 public class FriendsListAdapter extends BaseAdapter {
     LayoutInflater mInflater;
-    List<String> friendsListUsername;
+    String[] friendsListUsername;
 
-    public FriendsListAdapter(Context c, List<String> users){
+    public FriendsListAdapter(Context c, String[] users){
         friendsListUsername = users;
         mInflater = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
     public int getCount() {
-        return friendsListUsername.size();
+        return friendsListUsername.length;
     }
 
     @Override
     public Object getItem(int position) {
-        return friendsListUsername.get(position);
+        return friendsListUsername[position];
     }
 
     @Override
@@ -38,7 +38,7 @@ public class FriendsListAdapter extends BaseAdapter {
         View v = mInflater.inflate(R.layout.friends_list_layout,null);
         TextView friendsListName = (TextView)v.findViewById(R.id.friendsInvitationNameTextView);
 
-        friendsListName.setText(friendsListUsername.get(i));
+        friendsListName.setText(friendsListUsername[i]);
         return v;
     }
 }
