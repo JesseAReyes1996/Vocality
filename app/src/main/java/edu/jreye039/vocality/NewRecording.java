@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Environment;
@@ -29,13 +30,16 @@ import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 
-public class NewRecording extends AppCompatActivity {
+public class NewRecording extends AppCompatActivity implements MediaPlayer.OnPreparedListener {
 
     Button startRecordBtn, stopRecordBtn, startPlayBtn, stopPlayBtn, uploadBtn;
     //the audio file's path
     String pathSave = "";
     MediaRecorder mediaRecorder;
-    MediaPlayer mediaPlayer;
+    MediaPlayer mediaPlayerRecording;
+    MediaPlayer mediaPlayerAccompaniment;
+    //to check whether the two MediaPlayers are both ready
+    boolean bothPrepared = false;
 
     //the AWS S3 link where the backing track is stored
     String s3_key;
@@ -94,27 +98,38 @@ public class NewRecording extends AppCompatActivity {
                     String fileID = UUID.randomUUID().toString();
                     pathSave = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + fileID + "_vocal_recording.3gp";
 
-                    mediaPlayer = new MediaPlayer();
+                    stopRecordBtn.setEnabled(true);
+                    startPlayBtn.setEnabled(false);
+                    startRecordBtn.setEnabled(false);
+                    stopPlayBtn.setEnabled(false);
+                    uploadBtn.setEnabled(false);
+
+                    //setup the media player
+                    mediaPlayerAccompaniment = new MediaPlayer();
                     try{
-                        mediaPlayer.setDataSource(tempFile.toString());
-                        mediaPlayer.prepare();
+                        mediaPlayerAccompaniment.setDataSource(tempFile.toString());
+                        mediaPlayerAccompaniment.prepare();
                     }catch(IOException e){
                         e.printStackTrace();
                     }
-                    mediaPlayer.start();
 
+                    //setup the media recorder
                     setupMediaRecorder();
                     try{
                         mediaRecorder.prepare();
-                        mediaRecorder.start();
-                        stopRecordBtn.setEnabled(true);
-                        startPlayBtn.setEnabled(false);
-                        startRecordBtn.setEnabled(false);
-                        stopPlayBtn.setEnabled(false);
-                        uploadBtn.setEnabled(false);
                     } catch(IOException e){
                         e.printStackTrace();
                     }
+
+                    mediaPlayerAccompaniment.start();
+                    //to set up a delay so that the audio correctly syncs up
+                    try {
+                        Thread.sleep(100);
+                    }
+                    catch(InterruptedException e){
+                        e.printStackTrace();
+                    }
+                    mediaRecorder.start();
 
                     //set the newly recorded file to be uploaded
                     s3Upload = new File(pathSave);
@@ -133,9 +148,9 @@ public class NewRecording extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mediaRecorder.stop();
-                if(mediaPlayer != null){
-                    mediaPlayer.stop();
-                    mediaPlayer.release();
+                if(mediaPlayerAccompaniment != null){
+                    mediaPlayerAccompaniment.stop();
+                    mediaPlayerAccompaniment.release();
                     setupMediaRecorder();
                 }
                 stopRecordBtn.setEnabled(false);
@@ -153,16 +168,58 @@ public class NewRecording extends AppCompatActivity {
                 stopRecordBtn.setEnabled(false);
                 startPlayBtn.setEnabled(false);
                 stopPlayBtn.setEnabled(true);
+                uploadBtn.setEnabled(false);
 
-                mediaPlayer = new MediaPlayer();
+                mediaPlayerRecording = new MediaPlayer();
+                mediaPlayerAccompaniment = new MediaPlayer();
+
+                //set up the user's audio
+                mediaPlayerRecording = new MediaPlayer();
                 try{
-                    mediaPlayer.setDataSource(pathSave);
-                    mediaPlayer.prepare();
+                    mediaPlayerRecording.setDataSource(pathSave);
+                    mediaPlayerRecording.prepareAsync();
+
+                    mediaPlayerRecording.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                        @Override
+                        public void onPrepared(MediaPlayer mp) {
+                            if(!bothPrepared){
+                                bothPrepared = true;
+                            }
+                            else if(bothPrepared){
+                                mediaPlayerAccompaniment.start();
+                                mediaPlayerRecording.start();
+                                bothPrepared = false;
+                            }
+                        }
+                    });
+
                 }catch(IOException e){
                     e.printStackTrace();
                 }
 
-                mediaPlayer.start();
+                //set up the accompaniment's audio
+                mediaPlayerAccompaniment = new MediaPlayer();
+                try{
+                    mediaPlayerAccompaniment.setDataSource(tempFile.toString());
+                    mediaPlayerAccompaniment.prepareAsync();
+
+                    mediaPlayerAccompaniment.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                        @Override
+                        public void onPrepared(MediaPlayer mp) {
+                            if(!bothPrepared){
+                                bothPrepared = true;
+                            }
+                            else if(bothPrepared){
+                                mediaPlayerRecording.start();
+                                mediaPlayerAccompaniment.start();
+                                bothPrepared = false;
+                            }
+                        }
+                    });
+                }catch(IOException e){
+                    e.printStackTrace();
+                }
+
                 Toast.makeText(NewRecording.this, "Playing...", Toast.LENGTH_SHORT).show();
             }
         });
@@ -174,10 +231,17 @@ public class NewRecording extends AppCompatActivity {
                 startRecordBtn.setEnabled(true);
                 stopPlayBtn.setEnabled(false);
                 startPlayBtn.setEnabled(true);
+                uploadBtn.setEnabled(true);
 
-                if(mediaPlayer != null){
-                    mediaPlayer.stop();
-                    mediaPlayer.release();
+                if(mediaPlayerRecording != null){
+                    mediaPlayerRecording.stop();
+                    mediaPlayerRecording.release();
+                    setupMediaRecorder();
+                }
+
+                if(mediaPlayerAccompaniment != null){
+                    mediaPlayerAccompaniment.stop();
+                    mediaPlayerAccompaniment.release();
                     setupMediaRecorder();
                 }
             }
@@ -218,6 +282,11 @@ public class NewRecording extends AppCompatActivity {
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         mediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
         mediaRecorder.setOutputFile(pathSave);
+    }
+
+    @Override
+    public void onPrepared(MediaPlayer mp) {
+
     }
 
     private void requestPermission(){

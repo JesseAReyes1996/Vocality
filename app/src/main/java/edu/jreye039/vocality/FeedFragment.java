@@ -25,7 +25,7 @@ public class FeedFragment extends Fragment {
         feedRecyclerView = (RecyclerView) rootView.findViewById(R.id.feedRecyclerView);
         feedRecyclerView.setHasFixedSize(true);
 
-        feedRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));//getActivity().getApplicationContext()
+        feedRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         SharedPreferences userInfo = this.getActivity().getSharedPreferences("userInfo", Context.MODE_PRIVATE);
         String username = userInfo.getString("username", "");

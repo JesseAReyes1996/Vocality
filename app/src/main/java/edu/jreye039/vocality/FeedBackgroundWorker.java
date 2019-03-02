@@ -111,7 +111,7 @@ public class FeedBackgroundWorker extends AsyncTask<String, Void, String> {
                 //if the recording is not private
                 if(columns[3].equals("0")){
                     //add the title/user who recorded
-                    userRecordings.add(new FeedItem(columns[1],columns[0]));
+                    userRecordings.add(new FeedItem(columns[0], columns[1], Integer.parseInt(columns[4]), Integer.parseInt(columns[5])));
                 }
             }
 

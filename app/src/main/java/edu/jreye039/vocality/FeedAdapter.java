@@ -16,11 +16,15 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
     public static class FeedViewHolder extends RecyclerView.ViewHolder {
         public TextView mCoverTitle;
         public TextView mUser;
+        public TextView mLikes;
+        public TextView mComments;
 
         public FeedViewHolder(@NonNull View itemView) {
             super(itemView);
             mCoverTitle = itemView.findViewById(R.id.coverTitleTextView);
             mUser = itemView.findViewById(R.id.coverAuthorTextView);
+            mLikes = itemView.findViewById(R.id.likesTextView);
+            mComments = itemView.findViewById(R.id.commentsTextView);
         }
     }
 
@@ -46,10 +50,24 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
             if(currentItem.getmCoverTitle().length() >= 27){
                 feedViewHolder.mCoverTitle.setTextSize(14);
             }
-
         }
+
         feedViewHolder.mCoverTitle.setText(currentItem.getmCoverTitle());
         feedViewHolder.mUser.setText("covered by " + currentItem.getmUsername());
+
+        if(currentItem.getmLikes() == 0){
+            feedViewHolder.mLikes.setVisibility(View.GONE);
+        }
+        else{
+            feedViewHolder.mLikes.setText("Likes " + Integer.toString(currentItem.getmLikes()));
+        }
+
+        if(currentItem.getmComments() == 0){
+            feedViewHolder.mComments.setVisibility(View.GONE);
+        }
+        else{
+            feedViewHolder.mComments.setText("Comments " + Integer.toString(currentItem.getmComments()));
+        }
 
     }
 

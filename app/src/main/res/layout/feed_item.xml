@@ -16,44 +16,60 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="title"
-            android:textSize="20sp"
-            android:textColor="@android:color/black" />
+            android:textColor="@android:color/black"
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/coverAuthorTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/coverTitleTextView"
             android:text="covered by "
-            android:textSize="15sp"
-            android:layout_below="@+id/coverTitleTextView" />
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/likesTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_below="@+id/coverAuthorTextView"
+            android:text="Likes 10" />
+
+        <TextView
+            android:id="@+id/commentsTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_below="@+id/coverAuthorTextView"
+            android:layout_marginStart="55dp"
+            android:text="Comments 100"
+            android:layout_marginLeft="55dp" />
 
         <ImageView
             android:id="@+id/likeBtn"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="37dp"
+            android:layout_height="37dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
-            android:layout_marginTop="7dp"
-            android:layout_marginRight="110dp"
-            android:src="@drawable/ic_thumb_up_black_24dp"/>
+            android:layout_marginTop="2dp"
+            android:layout_marginRight="108dp"
+            android:src="@drawable/ic_thumb_up_black_24dp" />
 
         <ImageView
             android:id="@+id/commentBtn"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="37dp"
+            android:layout_height="37dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
-            android:layout_marginTop="8dp"
-            android:layout_marginRight="55dp"
-            android:src="@drawable/ic_mode_comment_black_24dp"/>
+            android:layout_marginTop="6dp"
+            android:layout_marginRight="53dp"
+            android:src="@drawable/ic_mode_comment_black_24dp" />
 
         <ImageView
             android:id="@+id/playBtn"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="3dp"
             android:src="@drawable/ic_play_circle_outline_black_24dp" />
 
     </RelativeLayout>
