@@ -333,7 +333,7 @@ public class NewRecording extends AppCompatActivity implements MediaPlayer.OnPre
                     //attach the recording to the user
                     String title = s3_key.substring(0, s3_key.length() - 4);
                     NewRecordingBackgroundWorker backgroundWorker = new NewRecordingBackgroundWorker(getApplicationContext());
-                    backgroundWorker.execute(username, title, fileKey);
+                    backgroundWorker.execute(username, title, fileKey, s3_key);
 
                     //take the user to the main feed
                     Intent startIntent = new Intent(NewRecording.this, Main.class);

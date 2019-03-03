@@ -29,6 +29,7 @@ public class NewRecordingBackgroundWorker extends AsyncTask<String, Void, String
     String username;
     String fileKey;
     String title;
+    String accompaniment;
 
     @Override
     protected void onPreExecute() {}
@@ -39,6 +40,7 @@ public class NewRecordingBackgroundWorker extends AsyncTask<String, Void, String
         username = params[0];
         title = params[1];
         fileKey = params[2];
+        accompaniment = params[3];
 
         try{
             //create a POST request to the given URL
@@ -52,7 +54,7 @@ public class NewRecordingBackgroundWorker extends AsyncTask<String, Void, String
             //initiate the POST request for username and password
             OutputStream outputStream = httpURLConnection.getOutputStream();
             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
-            String post_data = URLEncoder.encode("username", "UTF-8") + "=" + URLEncoder.encode(username, "UTF-8") + "&" + URLEncoder.encode("title", "UTF-8") + "=" + URLEncoder.encode(title, "UTF-8") + "&" + URLEncoder.encode("fileKey", "UTF-8") + "=" + URLEncoder.encode(fileKey, "UTF-8");
+            String post_data = URLEncoder.encode("username", "UTF-8") + "=" + URLEncoder.encode(username, "UTF-8") + "&" + URLEncoder.encode("title", "UTF-8") + "=" + URLEncoder.encode(title, "UTF-8") + "&" + URLEncoder.encode("fileKey", "UTF-8") + "=" + URLEncoder.encode(fileKey, "UTF-8") + "&" + URLEncoder.encode("accompaniment", "UTF-8") + "=" + URLEncoder.encode(accompaniment, "UTF-8");
             //send the POST request to the server
             bufferedWriter.write(post_data);
             bufferedWriter.flush();

@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -13,18 +14,46 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
 
     private ArrayList<FeedItem> mFeedList;
 
+    private OnItemClickListener mListener;
+
+    public interface OnItemClickListener{
+        void onPlayClick(int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener){ mListener = listener; }
+
     public static class FeedViewHolder extends RecyclerView.ViewHolder {
         public TextView mCoverTitle;
         public TextView mUser;
         public TextView mLikes;
         public TextView mComments;
 
-        public FeedViewHolder(@NonNull View itemView) {
+        public ImageView mLikeImage;
+        public ImageView mCommentImage;
+        public ImageView mPlayImage;
+
+        public FeedViewHolder(@NonNull View itemView, final FeedAdapter.OnItemClickListener listener) {
             super(itemView);
             mCoverTitle = itemView.findViewById(R.id.coverTitleTextView);
             mUser = itemView.findViewById(R.id.coverAuthorTextView);
             mLikes = itemView.findViewById(R.id.likesTextView);
             mComments = itemView.findViewById(R.id.commentsTextView);
+
+            mLikeImage = itemView.findViewById(R.id.likeBtn);
+            mCommentImage = itemView.findViewById(R.id.commentBtn);
+            mPlayImage = itemView.findViewById(R.id.playBtn);
+
+            mPlayImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(listener != null){
+                        int position = getAdapterPosition();
+                        if(position != RecyclerView.NO_POSITION){
+                            listener.onPlayClick(position);
+                        }
+                    }
+                }
+            });
         }
     }
 
@@ -36,7 +65,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
     @Override
     public FeedViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.feed_item, viewGroup, false);
-        FeedViewHolder fvh = new FeedViewHolder(v);
+        FeedViewHolder fvh = new FeedViewHolder(v, mListener);
         return fvh;
     }
 

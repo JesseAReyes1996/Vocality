@@ -1,8 +1,10 @@
 package edu.jreye039.vocality;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -119,22 +121,20 @@ public class FeedBackgroundWorker extends AsyncTask<String, Void, String> {
             feedAdapter = new FeedAdapter(userRecordings);
             feedRecyclerView.setAdapter(feedAdapter);
 
-            //set an OnClickListener on the displayed items
-            /*songsAdapter.setOnItemClickListener(new SearchSongsAdapter.OnItemClickListener() {
+            //set an OnClickListener on the displayed items' play button
+            feedAdapter.setOnItemClickListener(new FeedAdapter.OnItemClickListener() {
                 @Override
-                public void onItemClick(int position) {
+                public void onPlayClick(int position) {
                     //picks the song the user clicked on
-                    String chosenItem = rows[position];
-                    String[] columns = chosenItem.split("<>");
+                    String chosenRecording = rows[position];
+                    String[] columns = chosenRecording.split("<>");
                     //holds the AWS S3 link for the chosen song
                     String s3_key = columns[2];
 
-                    //take the user to record their song
-                    Intent startIntent = new Intent(context, NewRecording.class);
-                    startIntent.putExtra("AWS_S3_KEY", s3_key);
-                    context.startActivity(startIntent);
+                    //TODO play the audio tracks
+                    Toast.makeText(context, "Recording..." + (position), Toast.LENGTH_SHORT).show();
                 }
-            });*/
+            });
         }
     }
 }
