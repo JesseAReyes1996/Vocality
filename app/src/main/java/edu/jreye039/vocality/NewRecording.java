@@ -5,10 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -27,7 +27,10 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3Client;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.SequenceInputStream;
 import java.util.UUID;
 
 public class NewRecording extends AppCompatActivity implements MediaPlayer.OnPreparedListener {
@@ -61,7 +64,7 @@ public class NewRecording extends AppCompatActivity implements MediaPlayer.OnPre
         //create the temp file
         outputDir = this.getCacheDir();
         try {
-            tempFile = File.createTempFile("temp",".3gp", outputDir);
+            tempFile = File.createTempFile("temp", ".3gp", outputDir);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -74,7 +77,7 @@ public class NewRecording extends AppCompatActivity implements MediaPlayer.OnPre
         downloadFileFromS3();
 
         //check if the user has allowed Vocality to access their storage/mic
-        if(!checkPermissionFromDevice()){
+        if (!checkPermissionFromDevice()) {
             requestPermission();
         }
 
@@ -89,12 +92,69 @@ public class NewRecording extends AppCompatActivity implements MediaPlayer.OnPre
         stopPlayBtn.setEnabled(false);
         uploadBtn.setEnabled(false);
 
+        /*/
+        if(checkPermissionFromDevice()){
+            //create the path to save the file to
+            String fileID = UUID.randomUUID().toString();
+            pathSave = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + fileID + "_vocal_recording.3gp";
+
+            //setup the media recorder
+            setupMediaRecorder();
+            try {
+                mediaRecorder.prepare();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            mediaRecorder.start();
+
+            //setup the media player
+            mediaPlayerAccompaniment = new MediaPlayer();
+
+            //give activity time to download the accompaniment
+            final Handler handler1 = new Handler();
+            handler1.postDelayed(new Runnable() {
+                @Override
+                public void run(){
+                    try {
+                        mediaPlayerAccompaniment.setDataSource(tempFile.toString());
+                        mediaPlayerAccompaniment.prepare();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, 2000);
+
+            //give activity time to download the accompaniment
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run(){
+                    mediaPlayerAccompaniment.start();
+                }
+            }, 3000);
+
+            //give activity time to download the accompaniment
+            final Handler handler2 = new Handler();
+            handler2.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (mediaPlayerAccompaniment != null) {
+                        mediaPlayerAccompaniment.stop();
+                        mediaPlayerAccompaniment.release();
+                        mediaRecorder.stop();
+                    }
+                }
+            }, 5000);
+        }
+        /*/
+
         startRecordBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //check if device has given read/write permission to Vocality
                 if(checkPermissionFromDevice()){
-                    //create the path to save the file to
+                    //AWS S3 key
                     String fileID = UUID.randomUUID().toString();
                     pathSave = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + fileID + "_vocal_recording.3gp";
 
@@ -104,15 +164,6 @@ public class NewRecording extends AppCompatActivity implements MediaPlayer.OnPre
                     stopPlayBtn.setEnabled(false);
                     uploadBtn.setEnabled(false);
 
-                    //setup the media player
-                    mediaPlayerAccompaniment = new MediaPlayer();
-                    try{
-                        mediaPlayerAccompaniment.setDataSource(tempFile.toString());
-                        mediaPlayerAccompaniment.prepare();
-                    }catch(IOException e){
-                        e.printStackTrace();
-                    }
-
                     //setup the media recorder
                     setupMediaRecorder();
                     try{
@@ -121,15 +172,31 @@ public class NewRecording extends AppCompatActivity implements MediaPlayer.OnPre
                         e.printStackTrace();
                     }
 
-                    mediaPlayerAccompaniment.start();
-                    //to set up a delay so that the audio correctly syncs up
-                    try {
-                        Thread.sleep(100);
-                    }
-                    catch(InterruptedException e){
+                    //setup the media player
+                    mediaPlayerAccompaniment = new MediaPlayer();
+                    try{
+                        mediaPlayerAccompaniment.setDataSource(tempFile.toString());
+                        mediaPlayerAccompaniment.prepare();//Mayhaps async?
+                        mediaPlayerAccompaniment.start();
+                        mediaPlayerAccompaniment.pause();
+                    }catch(IOException e){
                         e.printStackTrace();
                     }
-                    mediaRecorder.start();
+
+                    mediaPlayerAccompaniment.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                        @Override
+                        public void onPrepared(MediaPlayer mp) {
+                            mediaPlayerAccompaniment.start();
+                            //to set up a delay so that the audio correctly syncs up
+                            final Handler handler5 = new Handler();
+                            handler5.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mediaRecorder.start();
+                                }
+                            }, 1); //a larger number will position the voice in front of the accompaniment 125
+                        }
+                    });
 
                     //set the newly recorded file to be uploaded
                     s3Upload = new File(pathSave);
