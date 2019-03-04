@@ -17,6 +17,8 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
     private OnItemClickListener mListener;
 
     public interface OnItemClickListener{
+        void onLikeClick(int position);
+        void onCommentClick(int position);
         void onPlayClick(int position);
     }
 
@@ -42,6 +44,30 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
             mLikeImage = itemView.findViewById(R.id.likeBtn);
             mCommentImage = itemView.findViewById(R.id.commentBtn);
             mPlayImage = itemView.findViewById(R.id.playBtn);
+
+            mLikeImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(listener != null){
+                        int position = getAdapterPosition();
+                        if(position != RecyclerView.NO_POSITION){
+                            listener.onLikeClick(position);
+                        }
+                    }
+                }
+            });
+
+            mCommentImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(listener != null){
+                        int position = getAdapterPosition();
+                        if(position != RecyclerView.NO_POSITION){
+                            listener.onCommentClick(position);
+                        }
+                    }
+                }
+            });
 
             mPlayImage.setOnClickListener(new View.OnClickListener() {
                 @Override
