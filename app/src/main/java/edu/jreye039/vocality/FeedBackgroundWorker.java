@@ -2,6 +2,7 @@ package edu.jreye039.vocality;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -131,7 +132,7 @@ public class FeedBackgroundWorker extends AsyncTask<String, Void, String> {
     @Override
     protected void onPostExecute(String result) {
 
-        //contains the results with the format [title, username, aws_s3_key, aws_backing_track, private, likes, comments]
+        //contains the results with the format [title, username, aws_s3_key, aws_backing_track, private, likes, comments, id]
         final String[] rows;
 
         if(!result.equals("no results")){
@@ -158,8 +159,21 @@ public class FeedBackgroundWorker extends AsyncTask<String, Void, String> {
             feedAdapter.setOnItemClickListener(new FeedAdapter.OnItemClickListener() {
                 @Override
                 public void onLikeClick(int position) {
+                    //the recording the user liked
+                    String chosenRecording = rows[position];
+                    String[] columns = chosenRecording.split("<>");
+
                     //TODO
                     Toast.makeText(context, "LIKING " + position, Toast.LENGTH_SHORT).show();
+
+                    FeedLikesBackgroundWorker backgroundWorker = new FeedLikesBackgroundWorker(context);
+
+                    //get username of user liking
+                    SharedPreferences userInfo = context.getSharedPreferences("userInfo", Context.MODE_PRIVATE);
+                    String userLiking = userInfo.getString("username", "");
+
+                    //username of user liking, id of post liking
+                    backgroundWorker.execute(userLiking, columns[7]);
                 }
 
                 @Override
