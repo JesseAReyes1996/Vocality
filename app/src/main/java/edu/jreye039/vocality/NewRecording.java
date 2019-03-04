@@ -27,10 +27,7 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3Client;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.SequenceInputStream;
 import java.util.UUID;
 
 public class NewRecording extends AppCompatActivity implements MediaPlayer.OnPreparedListener {
@@ -39,6 +36,8 @@ public class NewRecording extends AppCompatActivity implements MediaPlayer.OnPre
     //the audio file's path
     String pathSave = "";
     MediaRecorder mediaRecorder;
+    //to check whether the recorder is in its recording state
+    boolean recording = false;
     MediaPlayer mediaPlayerRecording;
     MediaPlayer mediaPlayerAccompaniment;
     //to check whether the two MediaPlayers are both ready
@@ -176,7 +175,7 @@ public class NewRecording extends AppCompatActivity implements MediaPlayer.OnPre
                     mediaPlayerAccompaniment = new MediaPlayer();
                     try{
                         mediaPlayerAccompaniment.setDataSource(tempFile.toString());
-                        mediaPlayerAccompaniment.prepare();//Mayhaps async?
+                        mediaPlayerAccompaniment.prepareAsync();//Mayhaps async?
                         mediaPlayerAccompaniment.start();
                         mediaPlayerAccompaniment.pause();
                     }catch(IOException e){
@@ -192,9 +191,10 @@ public class NewRecording extends AppCompatActivity implements MediaPlayer.OnPre
                             handler5.postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
+                                    recording = true;
                                     mediaRecorder.start();
                                 }
-                            }, 1); //a larger number will position the voice in front of the accompaniment 125
+                            }, 125); //a larger number will position the voice in front of the accompaniment 125
                         }
                     });
 
@@ -214,7 +214,10 @@ public class NewRecording extends AppCompatActivity implements MediaPlayer.OnPre
         stopRecordBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mediaRecorder.stop();
+                if(recording){
+                    mediaRecorder.stop();
+                    recording = false;
+                }
                 if(mediaPlayerAccompaniment != null){
                     mediaPlayerAccompaniment.stop();
                     mediaPlayerAccompaniment.release();
@@ -236,9 +239,6 @@ public class NewRecording extends AppCompatActivity implements MediaPlayer.OnPre
                 startPlayBtn.setEnabled(false);
                 stopPlayBtn.setEnabled(true);
                 uploadBtn.setEnabled(false);
-
-                mediaPlayerRecording = new MediaPlayer();
-                mediaPlayerAccompaniment = new MediaPlayer();
 
                 //set up the user's audio
                 mediaPlayerRecording = new MediaPlayer();
@@ -333,7 +333,7 @@ public class NewRecording extends AppCompatActivity implements MediaPlayer.OnPre
                     //attach the recording to the user
                     String title = s3_key.substring(0, s3_key.length() - 4);
                     NewRecordingBackgroundWorker backgroundWorker = new NewRecordingBackgroundWorker(getApplicationContext());
-                    backgroundWorker.execute(username, title, fileKey);
+                    backgroundWorker.execute(username, title, fileKey, s3_key);
 
                     //take the user to the main feed
                     Intent startIntent = new Intent(NewRecording.this, Main.class);
