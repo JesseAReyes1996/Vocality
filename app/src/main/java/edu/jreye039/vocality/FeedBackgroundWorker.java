@@ -184,6 +184,9 @@ public class FeedBackgroundWorker extends AsyncTask<String, Void, String> {
 
                 @Override
                 public void onPlayClick(int position) {
+                    //TODO
+                    Toast.makeText(context, "Playing...", Toast.LENGTH_SHORT).show();
+
                     //picks the song the user clicked on
                     String chosenRecording = rows[position];
                     String[] columns = chosenRecording.split("<>");
