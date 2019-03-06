@@ -1,5 +1,6 @@
 package edu.jreye039.vocality;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,6 +13,12 @@ public class ProfileFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        View v = inflater.inflate(R.layout.fragment_profile, container, false);
+
+        //start new recording activity
+        Intent startIntent = new Intent(getActivity().getApplicationContext(), ProfileActivity.class);
+        getActivity().startActivity(startIntent);
+
+        return v;
     }
 }

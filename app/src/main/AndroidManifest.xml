@@ -17,23 +17,45 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Main" android:screenOrientation="portrait">
+        <activity android:name=".ProfileActivity"></activity>
+        <activity
+            android:name=".Main"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SearchSongs" android:screenOrientation="portrait"/>
-        <activity android:name=".NewRecording" android:screenOrientation="portrait"/>
-        <activity android:name=".Register" android:screenOrientation="portrait"/>
-        <activity android:name=".FriendsList" android:screenOrientation="portrait"/>
-        <activity android:name=".SearchFriends" android:screenOrientation="portrait"/>
-        <activity android:name=".Login" android:screenOrientation="portrait"/>
-        <activity android:name=".NotLoggedIn" android:screenOrientation="portrait"/>
+        <activity
+            android:name=".SearchSongs"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".NewRecording"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Register"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".FriendsList"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".SearchFriends"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Login"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".NotLoggedIn"
+            android:screenOrientation="portrait" />
 
         <service android:name="org.eclipse.paho.android.service.MqttService" />
-        <service android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService" android:enabled="true" />
+        <service
+            android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService"
+            android:enabled="true" />
     </application>
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
 </manifest>
