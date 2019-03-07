@@ -12,8 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
-
 public class NotificationsFragment extends Fragment {
 
     private RecyclerView notificationsRecyclerView;
@@ -29,18 +27,12 @@ public class NotificationsFragment extends Fragment {
 
         notificationsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        ArrayList<NotificationsItem> items = new ArrayList<>();
-        items.add(new NotificationsItem(R.drawable.ic_person_black_24dp,"I like your stuff"));
-        items.add(new NotificationsItem(R.drawable.ic_person_black_24dp,"I like your stuff"));
-        items.add(new NotificationsItem(R.drawable.ic_person_black_24dp,"I like your stuff"));
-        /*SharedPreferences userInfo = this.getActivity().getSharedPreferences("userInfo", Context.MODE_PRIVATE);
+        SharedPreferences userInfo = this.getActivity().getSharedPreferences("userInfo", Context.MODE_PRIVATE);
         String username = userInfo.getString("username", "");
 
         //display the recordings in the RecyclerView
         NotificationsBackgroundWorker backgroundWorker = new NotificationsBackgroundWorker(getActivity(), notificationsRecyclerView);
-        backgroundWorker.execute(username);*/
-
-        notificationsRecyclerView.setAdapter(new NotificationsAdapter(items));
+        backgroundWorker.execute(username);
 
         return rootView;
     }
