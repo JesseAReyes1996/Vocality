@@ -123,7 +123,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
         else{
             feedViewHolder.mComments.setText("Comments " + Integer.toString(currentItem.getmComments()));
         }
-
     }
 
     @Override

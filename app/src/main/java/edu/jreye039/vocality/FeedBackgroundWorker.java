@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
@@ -163,9 +164,6 @@ public class FeedBackgroundWorker extends AsyncTask<String, Void, String> {
                     String chosenRecording = rows[position];
                     String[] columns = chosenRecording.split("<>");
 
-                    //TODO
-                    Toast.makeText(context, "LIKING " + position, Toast.LENGTH_SHORT).show();
-
                     FeedLikesBackgroundWorker backgroundWorker = new FeedLikesBackgroundWorker(context);
 
                     //get username of user liking
@@ -174,19 +172,24 @@ public class FeedBackgroundWorker extends AsyncTask<String, Void, String> {
 
                     //username of user liking, id of post liking
                     backgroundWorker.execute(userLiking, columns[7]);
+
+                    //refresh the fragment to update the number of likes a post has received
+                    AppCompatActivity appCompatActivity = (AppCompatActivity) context;
+                    appCompatActivity.getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FeedFragment()).commit();
                 }
 
                 @Override
                 public void onCommentClick(int position) {
-                    //TODO
-                    Toast.makeText(context, "COMMENTING " + position, Toast.LENGTH_SHORT).show();
+                    String chosenRecording = rows[position];
+                    String[] columns = chosenRecording.split("<>");
+                    //take the user to the comments for the post they clicked on
+                    Intent startIntent = new Intent(context, CommentsActivity.class);
+                    startIntent.putExtra("recording_id", columns[7]);
+                    context.startActivity(startIntent);
                 }
 
                 @Override
                 public void onPlayClick(int position) {
-                    //TODO
-                    Toast.makeText(context, "Playing...", Toast.LENGTH_SHORT).show();
-
                     //picks the song the user clicked on
                     String chosenRecording = rows[position];
                     String[] columns = chosenRecording.split("<>");
@@ -211,6 +214,7 @@ public class FeedBackgroundWorker extends AsyncTask<String, Void, String> {
                     //either starts a recording if nothing is currently being playing or if
                     //a recording is being played, ensures only a different recording can be started
                     else if(!isPlaying && lastPlayed != position){
+                        Toast.makeText(context, "Loading...", Toast.LENGTH_SHORT).show();
                         isPlaying = true;
                         lastPlayed = position;
 
@@ -241,6 +245,7 @@ public class FeedBackgroundWorker extends AsyncTask<String, Void, String> {
                                                 mediaPlayerAccompaniment.start();
                                                 mediaPlayerRecording.start();
                                                 bothPrepared = false;
+                                                Toast.makeText(context, "Playing", Toast.LENGTH_SHORT).show();
                                             }
                                         }
                                     });
@@ -265,6 +270,7 @@ public class FeedBackgroundWorker extends AsyncTask<String, Void, String> {
                                                 mediaPlayerRecording.start();
                                                 mediaPlayerAccompaniment.start();
                                                 bothPrepared = false;
+                                                Toast.makeText(context, "Playing", Toast.LENGTH_SHORT).show();
                                             }
                                         }
                                     });
@@ -272,11 +278,12 @@ public class FeedBackgroundWorker extends AsyncTask<String, Void, String> {
                                     e.printStackTrace();
                                 }
                             }
-                        }, 1000);
+                        }, 5000);
                     }
 
                     //when the user taps the play button of a different recording
                     else if(isPlaying && lastPlayed != position){
+                        Toast.makeText(context, "Loading...", Toast.LENGTH_SHORT).show();
                         lastPlayed = position;
                         if(mediaPlayerRecording != null){
                             mediaPlayerRecording.stop();
@@ -345,9 +352,10 @@ public class FeedBackgroundWorker extends AsyncTask<String, Void, String> {
                                     e.printStackTrace();
                                 }
                             }
-                        }, 1000);
+                        }, 5000);
                     }
                     else if(!isPlaying && lastPlayed == position){
+                        Toast.makeText(context, "Loading...", Toast.LENGTH_SHORT).show();
                         isPlaying = true;
                         final Handler downloadDelay = new Handler();
                         downloadDelay.postDelayed(new Runnable() {
@@ -400,7 +408,7 @@ public class FeedBackgroundWorker extends AsyncTask<String, Void, String> {
                                     e.printStackTrace();
                                 }
                             }
-                        }, 1000);
+                        }, 5000);
                     }
                 }
             });

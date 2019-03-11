@@ -41,7 +41,13 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
     public void onBindViewHolder(@NonNull NotificationsViewHolder notificationsViewHolder, int i) {
         NotificationsItem currentItem = mNotificationsList.get(i);
 
-        notificationsViewHolder.mProfilePictureImageView.setImageResource(currentItem.getProfilePicture());
+        //if the user doesn't have a profile picture uploaded TODO
+        if(currentItem.getProfilePicture() == -1){
+            notificationsViewHolder.mProfilePictureImageView.setImageResource(R.drawable.ic_person_black_24dp);
+        }
+        else{
+            notificationsViewHolder.mProfilePictureImageView.setImageResource(currentItem.getProfilePicture());
+        }
         notificationsViewHolder.mNotificationsTextView.setText(currentItem.getNotification());
     }
 
