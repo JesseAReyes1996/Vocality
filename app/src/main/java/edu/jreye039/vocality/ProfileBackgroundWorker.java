@@ -1,11 +1,13 @@
 package edu.jreye039.vocality;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
@@ -58,6 +60,7 @@ public class ProfileBackgroundWorker extends AsyncTask<String, Void, String> {
     boolean bothPrepared = false;
 
     boolean isPlaying = false;
+    boolean loading = false;
     //to know what recording was played last
     int lastPlayed = -1;
 
@@ -163,9 +166,6 @@ public class ProfileBackgroundWorker extends AsyncTask<String, Void, String> {
                     String chosenRecording = rows[position];
                     String[] columns = chosenRecording.split("<>");
 
-                    //TODO
-                    Toast.makeText(context, "LIKING " + position, Toast.LENGTH_SHORT).show();
-
                     FeedLikesBackgroundWorker backgroundWorker = new FeedLikesBackgroundWorker(context);
 
                     //get username of user liking
@@ -174,19 +174,25 @@ public class ProfileBackgroundWorker extends AsyncTask<String, Void, String> {
 
                     //username of user liking, id of post liking
                     backgroundWorker.execute(userLiking, columns[7]);
+
+                    //refresh the activity to update the number of likes a post has received
+                    Activity activity = (Activity) context;
+                    activity.finish();
+                    activity.startActivity(activity.getIntent());
                 }
 
                 @Override
                 public void onCommentClick(int position) {
-                    //TODO
-                    Toast.makeText(context, "COMMENTING " + position, Toast.LENGTH_SHORT).show();
+                    String chosenRecording = rows[position];
+                    String[] columns = chosenRecording.split("<>");
+                    //take the user to the comments for the post they clicked on
+                    Intent startIntent = new Intent(context, CommentsActivity.class);
+                    startIntent.putExtra("recording_id", columns[7]);
+                    context.startActivity(startIntent);
                 }
 
                 @Override
                 public void onPlayClick(int position) {
-                    //TODO
-                    Toast.makeText(context, "Playing...", Toast.LENGTH_SHORT).show();
-
                     //picks the song the user clicked on
                     String chosenRecording = rows[position];
                     String[] columns = chosenRecording.split("<>");
@@ -194,213 +200,232 @@ public class ProfileBackgroundWorker extends AsyncTask<String, Void, String> {
                     String recordingKey = columns[2];
                     String accompanimentKey = columns[3];
 
-                    //when the user taps the play button of the currently playing recording
-                    if(isPlaying && lastPlayed == position){
-                        isPlaying = false;
-                        lastPlayed = -1;
-                        if(mediaPlayerRecording != null){
-                            mediaPlayerRecording.stop();
-                            mediaPlayerRecording.release();
-                        }
-
-                        if(mediaPlayerAccompaniment != null){
-                            mediaPlayerAccompaniment.stop();
-                            mediaPlayerAccompaniment.release();
-                        }
-                    }
-                    //either starts a recording if nothing is currently being playing or if
-                    //a recording is being played, ensures only a different recording can be started
-                    else if(!isPlaying && lastPlayed != position){
-                        isPlaying = true;
-                        lastPlayed = position;
-
-                        //download the file
-                        credentialsProvider();
-                        setTransferUtility();
-
-                        downloadFileFromS3(recordingKey, tempRecording);
-                        downloadFileFromS3(accompanimentKey, tempAccompaniment);
-
-                        final Handler downloadDelay = new Handler();
-                        downloadDelay.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                //set up the user's audio
-                                mediaPlayerRecording = new MediaPlayer();
-                                try{
-                                    mediaPlayerRecording.setDataSource(tempRecording.toString());
-                                    mediaPlayerRecording.prepareAsync();
-
-                                    mediaPlayerRecording.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                                        @Override
-                                        public void onPrepared(MediaPlayer mp) {
-                                            if(!bothPrepared){
-                                                bothPrepared = true;
-                                            }
-                                            else if(bothPrepared){
-                                                mediaPlayerAccompaniment.start();
-                                                mediaPlayerRecording.start();
-                                                bothPrepared = false;
-                                            }
-                                        }
-                                    });
-
-                                }catch(IOException e){
-                                    e.printStackTrace();
-                                }
-
-                                //set up the accompaniment's audio
-                                mediaPlayerAccompaniment = new MediaPlayer();
-                                try{
-                                    mediaPlayerAccompaniment.setDataSource(tempAccompaniment.toString());
-                                    mediaPlayerAccompaniment.prepareAsync();
-
-                                    mediaPlayerAccompaniment.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                                        @Override
-                                        public void onPrepared(MediaPlayer mp) {
-                                            if(!bothPrepared){
-                                                bothPrepared = true;
-                                            }
-                                            else if(bothPrepared){
-                                                mediaPlayerRecording.start();
-                                                mediaPlayerAccompaniment.start();
-                                                bothPrepared = false;
-                                            }
-                                        }
-                                    });
-                                }catch(IOException e){
-                                    e.printStackTrace();
-                                }
+                    if(!loading){
+                        loading = true;
+                        //when the user taps the play button of the currently playing recording
+                        if(isPlaying && lastPlayed == position){
+                            isPlaying = false;
+                            lastPlayed = -1;
+                            if(mediaPlayerRecording != null){
+                                mediaPlayerRecording.stop();
+                                mediaPlayerRecording.release();
                             }
-                        }, 1000);
-                    }
 
-                    //when the user taps the play button of a different recording
-                    else if(isPlaying && lastPlayed != position){
-                        lastPlayed = position;
-                        if(mediaPlayerRecording != null){
-                            mediaPlayerRecording.stop();
-                            mediaPlayerRecording.release();
+                            if(mediaPlayerAccompaniment != null){
+                                mediaPlayerAccompaniment.stop();
+                                mediaPlayerAccompaniment.release();
+                            }
+                            loading = false;
+                        }
+                        //either starts a recording if nothing is currently being playing or if
+                        //a recording is being played, ensures only a different recording can be started
+                        else if(!isPlaying && lastPlayed != position){
+                            Toast.makeText(context, "Loading...", Toast.LENGTH_SHORT).show();
+                            isPlaying = true;
+                            lastPlayed = position;
+
+                            //download the file
+                            credentialsProvider();
+                            setTransferUtility();
+
+                            downloadFileFromS3(recordingKey, tempRecording);
+                            downloadFileFromS3(accompanimentKey, tempAccompaniment);
+
+                            final Handler downloadDelay = new Handler();
+                            downloadDelay.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    //set up the user's audio
+                                    mediaPlayerRecording = new MediaPlayer();
+                                    try{
+                                        mediaPlayerRecording.setDataSource(tempRecording.toString());
+                                        mediaPlayerRecording.prepareAsync();
+
+                                        mediaPlayerRecording.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                                            @Override
+                                            public void onPrepared(MediaPlayer mp) {
+                                                if(!bothPrepared){
+                                                    bothPrepared = true;
+                                                }
+                                                else if(bothPrepared){
+                                                    mediaPlayerAccompaniment.start();
+                                                    mediaPlayerRecording.start();
+                                                    bothPrepared = false;
+                                                    loading = false;
+                                                    Toast.makeText(context, "Playing", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        });
+
+                                    }catch(IOException e){
+                                        e.printStackTrace();
+                                    }
+
+                                    //set up the accompaniment's audio
+                                    mediaPlayerAccompaniment = new MediaPlayer();
+                                    try{
+                                        mediaPlayerAccompaniment.setDataSource(tempAccompaniment.toString());
+                                        mediaPlayerAccompaniment.prepareAsync();
+
+                                        mediaPlayerAccompaniment.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                                            @Override
+                                            public void onPrepared(MediaPlayer mp) {
+                                                if(!bothPrepared){
+                                                    bothPrepared = true;
+                                                }
+                                                else if(bothPrepared){
+                                                    mediaPlayerRecording.start();
+                                                    mediaPlayerAccompaniment.start();
+                                                    bothPrepared = false;
+                                                    loading = false;
+                                                    Toast.makeText(context, "Playing", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        });
+                                    }catch(IOException e){
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }, 5000);
                         }
 
-                        if(mediaPlayerAccompaniment != null){
-                            mediaPlayerAccompaniment.stop();
-                            mediaPlayerAccompaniment.release();
+                        //when the user taps the play button of a different recording
+                        else if(isPlaying && lastPlayed != position){
+                            Toast.makeText(context, "Loading...", Toast.LENGTH_SHORT).show();
+                            lastPlayed = position;
+                            if(mediaPlayerRecording != null){
+                                mediaPlayerRecording.stop();
+                                mediaPlayerRecording.release();
+                            }
+
+                            if(mediaPlayerAccompaniment != null){
+                                mediaPlayerAccompaniment.stop();
+                                mediaPlayerAccompaniment.release();
+                            }
+                            //download the file
+                            credentialsProvider();
+                            setTransferUtility();
+
+                            downloadFileFromS3(recordingKey, tempRecording);
+                            downloadFileFromS3(accompanimentKey, tempAccompaniment);
+
+                            final Handler downloadDelay = new Handler();
+                            downloadDelay.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    //set up the user's audio
+                                    mediaPlayerRecording = new MediaPlayer();
+                                    try{
+                                        mediaPlayerRecording.setDataSource(tempRecording.toString());
+                                        mediaPlayerRecording.prepareAsync();
+
+                                        mediaPlayerRecording.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                                            @Override
+                                            public void onPrepared(MediaPlayer mp) {
+                                                if(!bothPrepared){
+                                                    bothPrepared = true;
+                                                }
+                                                else if(bothPrepared){
+                                                    mediaPlayerAccompaniment.start();
+                                                    mediaPlayerRecording.start();
+                                                    bothPrepared = false;
+                                                    loading = false;
+                                                    Toast.makeText(context, "Playing", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        });
+
+                                    }catch(IOException e){
+                                        e.printStackTrace();
+                                    }
+
+                                    //set up the accompaniment's audio
+                                    mediaPlayerAccompaniment = new MediaPlayer();
+                                    try{
+                                        mediaPlayerAccompaniment.setDataSource(tempAccompaniment.toString());
+                                        mediaPlayerAccompaniment.prepareAsync();
+
+                                        mediaPlayerAccompaniment.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                                            @Override
+                                            public void onPrepared(MediaPlayer mp) {
+                                                if(!bothPrepared){
+                                                    bothPrepared = true;
+                                                }
+                                                else if(bothPrepared){
+                                                    mediaPlayerRecording.start();
+                                                    mediaPlayerAccompaniment.start();
+                                                    bothPrepared = false;
+                                                    loading = false;
+                                                    Toast.makeText(context, "Playing", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        });
+                                    }catch(IOException e){
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }, 5000);
                         }
-                        //download the file
-                        credentialsProvider();
-                        setTransferUtility();
+                        else if(!isPlaying && lastPlayed == position){
+                            Toast.makeText(context, "Loading...", Toast.LENGTH_SHORT).show();
+                            isPlaying = true;
+                            final Handler downloadDelay = new Handler();
+                            downloadDelay.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    //set up the user's audio
+                                    mediaPlayerRecording = new MediaPlayer();
+                                    try{
+                                        mediaPlayerRecording.setDataSource(tempRecording.toString());
+                                        mediaPlayerRecording.prepareAsync();
 
-                        downloadFileFromS3(recordingKey, tempRecording);
-                        downloadFileFromS3(accompanimentKey, tempAccompaniment);
-
-                        final Handler downloadDelay = new Handler();
-                        downloadDelay.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                //set up the user's audio
-                                mediaPlayerRecording = new MediaPlayer();
-                                try{
-                                    mediaPlayerRecording.setDataSource(tempRecording.toString());
-                                    mediaPlayerRecording.prepareAsync();
-
-                                    mediaPlayerRecording.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                                        @Override
-                                        public void onPrepared(MediaPlayer mp) {
-                                            if(!bothPrepared){
-                                                bothPrepared = true;
+                                        mediaPlayerRecording.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                                            @Override
+                                            public void onPrepared(MediaPlayer mp) {
+                                                if(!bothPrepared){
+                                                    bothPrepared = true;
+                                                }
+                                                else if(bothPrepared){
+                                                    mediaPlayerAccompaniment.start();
+                                                    mediaPlayerRecording.start();
+                                                    bothPrepared = false;
+                                                    loading = false;
+                                                    Toast.makeText(context, "Playing", Toast.LENGTH_SHORT).show();
+                                                }
                                             }
-                                            else if(bothPrepared){
-                                                mediaPlayerAccompaniment.start();
-                                                mediaPlayerRecording.start();
-                                                bothPrepared = false;
-                                            }
-                                        }
-                                    });
+                                        });
 
-                                }catch(IOException e){
-                                    e.printStackTrace();
+                                    }catch(IOException e){
+                                        e.printStackTrace();
+                                    }
+
+                                    //set up the accompaniment's audio
+                                    mediaPlayerAccompaniment = new MediaPlayer();
+                                    try{
+                                        mediaPlayerAccompaniment.setDataSource(tempAccompaniment.toString());
+                                        mediaPlayerAccompaniment.prepareAsync();
+
+                                        mediaPlayerAccompaniment.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                                            @Override
+                                            public void onPrepared(MediaPlayer mp) {
+                                                if(!bothPrepared){
+                                                    bothPrepared = true;
+                                                }
+                                                else if(bothPrepared){
+                                                    mediaPlayerRecording.start();
+                                                    mediaPlayerAccompaniment.start();
+                                                    bothPrepared = false;
+                                                    loading = false;
+                                                    Toast.makeText(context, "Playing", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        });
+                                    }catch(IOException e){
+                                        e.printStackTrace();
+                                    }
                                 }
-
-                                //set up the accompaniment's audio
-                                mediaPlayerAccompaniment = new MediaPlayer();
-                                try{
-                                    mediaPlayerAccompaniment.setDataSource(tempAccompaniment.toString());
-                                    mediaPlayerAccompaniment.prepareAsync();
-
-                                    mediaPlayerAccompaniment.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                                        @Override
-                                        public void onPrepared(MediaPlayer mp) {
-                                            if(!bothPrepared){
-                                                bothPrepared = true;
-                                            }
-                                            else if(bothPrepared){
-                                                mediaPlayerRecording.start();
-                                                mediaPlayerAccompaniment.start();
-                                                bothPrepared = false;
-                                            }
-                                        }
-                                    });
-                                }catch(IOException e){
-                                    e.printStackTrace();
-                                }
-                            }
-                        }, 1000);
-                    }
-                    else if(!isPlaying && lastPlayed == position){
-                        isPlaying = true;
-                        final Handler downloadDelay = new Handler();
-                        downloadDelay.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                //set up the user's audio
-                                mediaPlayerRecording = new MediaPlayer();
-                                try{
-                                    mediaPlayerRecording.setDataSource(tempRecording.toString());
-                                    mediaPlayerRecording.prepareAsync();
-
-                                    mediaPlayerRecording.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                                        @Override
-                                        public void onPrepared(MediaPlayer mp) {
-                                            if(!bothPrepared){
-                                                bothPrepared = true;
-                                            }
-                                            else if(bothPrepared){
-                                                mediaPlayerAccompaniment.start();
-                                                mediaPlayerRecording.start();
-                                                bothPrepared = false;
-                                            }
-                                        }
-                                    });
-
-                                }catch(IOException e){
-                                    e.printStackTrace();
-                                }
-
-                                //set up the accompaniment's audio
-                                mediaPlayerAccompaniment = new MediaPlayer();
-                                try{
-                                    mediaPlayerAccompaniment.setDataSource(tempAccompaniment.toString());
-                                    mediaPlayerAccompaniment.prepareAsync();
-
-                                    mediaPlayerAccompaniment.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                                        @Override
-                                        public void onPrepared(MediaPlayer mp) {
-                                            if(!bothPrepared){
-                                                bothPrepared = true;
-                                            }
-                                            else if(bothPrepared){
-                                                mediaPlayerRecording.start();
-                                                mediaPlayerAccompaniment.start();
-                                                bothPrepared = false;
-                                            }
-                                        }
-                                    });
-                                }catch(IOException e){
-                                    e.printStackTrace();
-                                }
-                            }
-                        }, 1000);
+                            }, 5000);
+                        }
                     }
                 }
             });
