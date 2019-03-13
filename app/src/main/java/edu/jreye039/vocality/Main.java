@@ -44,7 +44,9 @@ public class Main extends AppCompatActivity{
                             selectedFragment = new SearchFragment();
                             break;
                         case R.id.nav_new_recording:
-                            selectedFragment = new NewRecordingFragment();
+                            Intent startIntent = new Intent(getApplicationContext(), SearchSongs.class);
+                            startActivity(startIntent);
+                            selectedFragment = new FeedFragment();
                             break;
                         case R.id.nav_notifications:
                             selectedFragment = new NotificationsFragment();
