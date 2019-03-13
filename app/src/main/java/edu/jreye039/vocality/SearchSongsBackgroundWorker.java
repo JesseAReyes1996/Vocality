@@ -1,5 +1,6 @@
 package edu.jreye039.vocality;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -129,6 +130,9 @@ public class SearchSongsBackgroundWorker extends AsyncTask<String, Void, String>
                     Intent startIntent = new Intent(context, NewRecording.class);
                     startIntent.putExtra("AWS_S3_KEY", s3_key);
                     context.startActivity(startIntent);
+
+                    Activity thisActivity = (Activity) context;
+                    thisActivity.finish();
                 }
             });
         }

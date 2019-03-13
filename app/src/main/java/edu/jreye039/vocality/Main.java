@@ -64,4 +64,11 @@ public class Main extends AppCompatActivity{
         }
     }
 
+    //update feed when activity comes back into focus
+    @Override
+    public void onResume() {
+        super.onResume();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FeedFragment()).commit();
+    }
+
 }
