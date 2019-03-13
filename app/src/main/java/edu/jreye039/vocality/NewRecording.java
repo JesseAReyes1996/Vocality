@@ -15,6 +15,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -90,63 +91,6 @@ public class NewRecording extends AppCompatActivity implements MediaPlayer.OnPre
         startPlayBtn.setEnabled(false);
         stopPlayBtn.setEnabled(false);
         uploadBtn.setEnabled(false);
-
-        /*/
-        if(checkPermissionFromDevice()){
-            //create the path to save the file to
-            String fileID = UUID.randomUUID().toString();
-            pathSave = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + fileID + "_vocal_recording.3gp";
-
-            //setup the media recorder
-            setupMediaRecorder();
-            try {
-                mediaRecorder.prepare();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            mediaRecorder.start();
-
-            //setup the media player
-            mediaPlayerAccompaniment = new MediaPlayer();
-
-            //give activity time to download the accompaniment
-            final Handler handler1 = new Handler();
-            handler1.postDelayed(new Runnable() {
-                @Override
-                public void run(){
-                    try {
-                        mediaPlayerAccompaniment.setDataSource(tempFile.toString());
-                        mediaPlayerAccompaniment.prepare();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }, 2000);
-
-            //give activity time to download the accompaniment
-            final Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run(){
-                    mediaPlayerAccompaniment.start();
-                }
-            }, 3000);
-
-            //give activity time to download the accompaniment
-            final Handler handler2 = new Handler();
-            handler2.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (mediaPlayerAccompaniment != null) {
-                        mediaPlayerAccompaniment.stop();
-                        mediaPlayerAccompaniment.release();
-                        mediaRecorder.stop();
-                    }
-                }
-            }, 5000);
-        }
-        /*/
 
         startRecordBtn.setOnClickListener(new View.OnClickListener() {
             @Override
