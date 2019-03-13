@@ -280,8 +280,7 @@ public class NewRecording extends AppCompatActivity implements MediaPlayer.OnPre
                     backgroundWorker.execute(username, title, fileKey, s3_key);
 
                     //take the user to the main feed
-                    Intent startIntent = new Intent(NewRecording.this, Main.class);
-                    NewRecording.this.startActivity(startIntent);
+                    finish();
                 }
             }
         });
