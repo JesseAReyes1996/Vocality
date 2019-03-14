@@ -68,7 +68,18 @@ public class Main extends AppCompatActivity{
     @Override
     public void onResume() {
         super.onResume();
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FeedFragment()).commit();
+
+        //check if the is the user logged out
+        SharedPreferences userInfo = getSharedPreferences("userInfo", Context.MODE_PRIVATE);
+        String username = userInfo.getString("username", "");
+        if(username.equals("")){
+            finish();
+            Intent startIntent = new Intent(getApplicationContext(), NotLoggedIn.class);
+            startActivity(startIntent);
+        }
+        else{
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FeedFragment()).commit();
+        }
     }
 
 }

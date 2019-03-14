@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
@@ -13,6 +14,7 @@ import android.net.Uri;
 import android.net.UrlQuerySanitizer;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -53,7 +55,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     Button bUploadImage, bDownloadImage;
     TextView nameTextView;
     private RecyclerView RecordRecyclerView;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,19 +120,21 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     Log.d("AWS S3 UPLOAD", "FILE NOT FOUND");
                 }
                 else{
+                    //get the user's username
+                    SharedPreferences userInfo = getSharedPreferences("userInfo", Context.MODE_PRIVATE);
+                    String username = userInfo.getString("username", "");
+
+                    String fileID = UUID.randomUUID().toString();
+                    fileKey = fileID + "_image.jpg";
+
                     //upload the file to AWS S3
                     credentialsProvider();
                     setTransferUtility();
                     uploadFileToS3();
 
-                    //get the user's username
-                    SharedPreferences userInfo = getSharedPreferences("userInfo", Context.MODE_PRIVATE);
-                    String username = userInfo.getString("username", "");
-
-                    //attach the recording to the user
-                    String title = s3_key.substring(0, s3_key.length() - 4);
+                    //attach the image to the user
                     ImageBackgroundWorker backgroundWorker = new ImageBackgroundWorker(getApplicationContext());
-                    backgroundWorker.execute(username, title, fileKey, s3_key);
+                    backgroundWorker.execute(username, fileKey);
                     
                 }
                 //Bitmap image = ((BitmapDrawable) imageToUpload.getDrawable()).getBitmap();
@@ -144,13 +147,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.imageToUpload:
                 Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(galleryIntent, RESULT_LOAD_IMAGE);
-
-                String fileID = UUID.randomUUID().toString();
-                pathSave = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + fileID + "_image.jpg";
-                s3Upload = new File(pathSave);
-                fileKey = fileID + "_image.jpg";
-
-                //Toast.makeText(ProfileActivity.this, "Recording...", Toast.LENGTH_SHORT).show();
                 break;
 
         }
@@ -162,12 +158,38 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && data != null) {
             Uri selectedImage = data.getData();
+            //set the image on the profile on the app
             imageToUpload.setImageURI(selectedImage);
+
+            //send the picture to be uploaded to AWS S3
+            String picturePath = getPath(this, selectedImage);
+            s3Upload = new File(picturePath);
         }
     }
 
+    public void onLogOut(View view) {
+        //clear SharedPreferences
+        PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().clear().apply();
 
-    String pathSave = "";
+        finish();
+    }
+
+    public static String getPath(Context context, Uri uri){
+        String result = null;
+        String[] proj = { MediaStore.Images.Media.DATA };
+        Cursor cursor = context.getContentResolver( ).query( uri, proj, null, null, null );
+        if(cursor != null){
+            if(cursor.moveToFirst()){
+                int column_index = cursor.getColumnIndexOrThrow(proj[0]);
+                result = cursor.getString(column_index);
+            }
+            cursor.close();
+        }
+        if(result == null){
+            result = "not found";
+        }
+        return result;
+    }
 
     //the AWS S3 link where the backing track is stored
     String s3_key;
