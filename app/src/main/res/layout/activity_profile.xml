@@ -15,6 +15,7 @@
             android:layout_height="450dp"
             android:orientation="vertical">
             <ImageView
+                android:background="@color/graylight"
                 android:id="@+id/imageToUpload"
                 android:layout_marginTop="45dp"
                 android:layout_gravity="center_horizontal"
@@ -24,11 +25,11 @@
                 android:id="@+id/bUploadImage"
                 android:layout_gravity="center_horizontal"
                 android:layout_width="wrap_content"
-                android:layout_height="20dp"
+                android:layout_height="45dp"
                 android:text="Upload" />
             <TextView
                 android:id="@+id/nameTextView"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="5dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -61,7 +62,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="125"
+                        android:text="0"
                         android:textStyle="bold"
                         android:textSize="20sp"
                         android:paddingTop="10dp"
@@ -83,7 +84,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="1205"
+                        android:text="0"
                         android:textStyle="bold"
                         android:textSize="20sp"
                         android:paddingTop="10dp"
@@ -105,7 +106,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="360"
+                        android:text="0"
                         android:textStyle="bold"
                         android:textSize="20sp"
                         android:paddingTop="10dp"
