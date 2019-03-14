@@ -20,8 +20,10 @@ public class SearchFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ///
         View v = inflater.inflate(R.layout.fragment_search, container, false);
+        Intent startIntent = new Intent(getActivity().getApplicationContext(), FriendsList.class);
+        getActivity().startActivity(startIntent);
 
-        friendbtn = (Button) v.findViewById(R.id.friendbtn);
+        /*friendbtn = (Button) v.findViewById(R.id.friendbtn);
 
         friendbtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -29,7 +31,7 @@ public class SearchFragment extends Fragment {
                 Intent startIntent = new Intent(getActivity(), FriendsList.class);
                 getActivity().startActivity(startIntent);
             }
-        });
+        });*/
 
         return v;
         ///

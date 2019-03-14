@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="#ffffff">
 
     <TextView
         android:id="@+id/requestedNameTextView"
@@ -17,6 +18,7 @@
         android:textSize="24sp" />
 
     <Button
+        android:background="@color/endblue"
         android:id="@+id/acceptRequestBtn"
         style="@style/Widget.AppCompat.Button.Small"
         android:layout_width="wrap_content"
@@ -30,6 +32,7 @@
         android:text="Accept" />
 
     <Button
+        android:background="@color/endblue"
         android:id="@+id/refuseRequestBtn"
         style="@style/Widget.AppCompat.Button.Small"
         android:layout_width="wrap_content"

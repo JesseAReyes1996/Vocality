@@ -89,7 +89,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         s3_key = getIntent().getStringExtra("AWS_S3_KEY");
 
         //create the temp file
-        outputDir = this.getCacheDir();
+        outputDir = this.getFilesDir();
         try {
             tempFile = File.createTempFile("temp", ".jpg", outputDir);
         } catch (IOException e) {
@@ -144,6 +144,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.imageToUpload:
                 Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(galleryIntent, RESULT_LOAD_IMAGE);
+
                 String fileID = UUID.randomUUID().toString();
                 pathSave = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + fileID + "_image.jpg";
                 s3Upload = new File(pathSave);
