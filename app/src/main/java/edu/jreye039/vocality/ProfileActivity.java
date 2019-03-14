@@ -169,8 +169,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     public void onLogOut(View view) {
         //clear SharedPreferences
-        PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().clear().apply();
-
+        SharedPreferences userInfo = this.getSharedPreferences("userInfo", Context.MODE_PRIVATE);
+        SharedPreferences.Editor edit = userInfo.edit();
+        edit.putString("username", "");
+        edit.apply();
         finish();
     }
 
