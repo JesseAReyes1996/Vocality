@@ -87,7 +87,7 @@ public class ProfileBackgroundWorker extends AsyncTask<String, Void, String> {
 
         try{
             //create a POST request to the given URL
-            URL url = new URL("http://jesseareyes1996.hostingerapp.com/vocality_feed.php");
+            URL url = new URL("http://jesseareyes1996.hostingerapp.com/vocality_profile_feed.php");
             //open the connection
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setRequestMethod("POST");
