@@ -103,6 +103,9 @@ public class RegisterBackgroundWorker extends AsyncTask<String, Void, String> {
             //take the user to the main feed
             Intent startIntent = new Intent(context, Main.class);
             context.startActivity(startIntent);
+
+            Activity finisher = (Activity) context;
+            finisher.finish();
         }
     }
 }

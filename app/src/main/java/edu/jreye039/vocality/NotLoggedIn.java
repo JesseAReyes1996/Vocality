@@ -20,6 +20,7 @@ public class NotLoggedIn extends AppCompatActivity {
             public void onClick(View v) {
                 Intent startIntent = new Intent(getApplicationContext(), Login.class);
                 startActivity(startIntent);
+                finish();
             }
         });
 
@@ -30,6 +31,7 @@ public class NotLoggedIn extends AppCompatActivity {
             public void onClick(View v) {
                 Intent startIntent = new Intent(getApplicationContext(), Register.class);
                 startActivity(startIntent);
+                finish();
             }
         });
     }
